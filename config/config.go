@@ -7,11 +7,13 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type cfg struct {
-	token   string `yaml:"token"`
+type Cfg struct {
+	Token string `yaml:"token"`
+	Prefix string `yaml:"prefixCommand"`
+	Version string `yaml:"version"`
 }
 
-var config = cfg{}
+var conf = Cfg{}
 
 func ReadConfig() error {
 	f, err := ioutil.ReadFile("./config.yml")
@@ -19,7 +21,7 @@ func ReadConfig() error {
 		log.Fatalf("loadConfig -> %v", err)
 		return err
 	}
-	err = yaml.Unmarshal(f, &config)
+	err = yaml.Unmarshal(f, &conf)
 	if err != nil {
 		log.Fatalf("loadConfig -> %v", err)
 		return err
@@ -28,7 +30,7 @@ func ReadConfig() error {
 }
 
 func saveConfig() {
-	data, err := yaml.Marshal(&config)
+	data, err := yaml.Marshal(&conf)
 	if err != nil {
 		log.Fatalf("saveConfig -> %v", err)
 		return

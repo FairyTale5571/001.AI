@@ -41,10 +41,7 @@ func Start() {
 		logger.PrintLog("Cannot open the session: %v", err)
 		return
 	}
-	defer s.Close() 	// закроем при завершении
-
-	// Удаляем и тут же их добавляем, потому что дискорд принимает изменения очень долго
-	//AddRemoveCommands()
+	defer s.Close() 	// закроем сессию при завершении
 
 	logger.PrintLog("Start goroutines")
 	stop := make(chan os.Signal)
@@ -52,5 +49,4 @@ func Start() {
 	<-stop
 	// Конец работы
 	logger.PrintLog("Gracefully shutdown\n************************************************************************\n\n")
-
 }

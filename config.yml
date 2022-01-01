@@ -1,1 +1,3 @@
 token: ""
+prefixCommand: "!"
+version: "1.0.1"
