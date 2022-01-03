@@ -11,12 +11,9 @@ import (
 func onUserConnected(s *discordgo.Session, u *discordgo.GuildMemberAdd) {
 	user := u.Member.User
 	logger.PrintLog("New user connected %v#%v | ID: %v",user.Username, user.Discriminator, user.ID )
-	sendPrivateMessage(user.ID,
-		"Привет," + pingUser(user.ID) + "!\n" +
-			"Это бот пана Киевского, царя криптовалютного мира!\n" +
-			"Если ты хочешь быть таким же классным как Пан Сергей или успешным как Тёма\n" +
-			"Тогда заполни эту форму **ссылка тут будет** и мы начнем обучение как только так сразу" +
-			"")
+	sendPrivateEmbedMessage(u.User.ID, generateWelcomeEmbed(u.User))
+	//sendEmbedMessage()
+
 }
 
 func onUserDisconnected(s *discordgo.Session, u *discordgo.GuildMemberRemove) {
@@ -48,6 +45,8 @@ func onMessageHandle(s *discordgo.Session, m *discordgo.MessageCreate) {
 			case "!help":
 				printSimpleMessage(m.ChannelID, "Привет," + pingUser(m.Author.ID) + "!" +
 					" Это бот пана Киевского, царя криптовалютного мира!")
+		case "!e":
+			sendPrivateEmbedMessage(m.Author.ID, generateWelcomeEmbed(m.Author))
 		case "!s":
 			sendPrivateMessage(m.Author.ID,
 				"Привет," + pingUser(m.Author.ID) + "!\n" +
