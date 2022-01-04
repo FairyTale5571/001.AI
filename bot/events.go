@@ -4,26 +4,25 @@ package bot
 import (
 	"001.AI/config"
 	"001.AI/logger"
+	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"strings"
 )
 
 func onUserConnected(s *discordgo.Session, u *discordgo.GuildMemberAdd) {
 	user := u.Member.User
-	logger.PrintLog("New user connected %v#%v | ID: %v",user.Username, user.Discriminator, user.ID )
+	logger.PrintLog("New user connected %v#%v | ID: %v",user.Username, user.Discriminator, user.ID)
 	sendPrivateEmbedMessage(u.User.ID, generateWelcomeEmbed(u.User))
-	//sendEmbedMessage()
-
+	text := fmt.Sprintf("😟 Пользвователь %s#%s присоединился %s",user.Username, user.Discriminator, pingUser(user.ID))
+	sendMessage("927519630396891137",text)
 }
 
 func onUserDisconnected(s *discordgo.Session, u *discordgo.GuildMemberRemove) {
 	user := u.Member.User
-	logger.PrintLog("User disconnected %v#%v | ID: %v",user.Username, user.Discriminator, user.ID )
-	sendPrivateMessage(user.ID,
-		"Ей, " + pingUser(user.ID) + "! Ты куда?\n" +
-			"Это бот пана Киевского, царя криптовалютного мира!\n" +
-			"Если у тебя что то не получалось, то возвращайся, мы тебе поможем!" +
-			"")
+	logger.PrintLog("User disconnected %v#%v | ID: %v",user.Username, user.Discriminator, user.ID)
+
+	text := fmt.Sprintf("😟 Пользвователь %s#%s отсоединился %s",user.Username, user.Discriminator, pingUser(user.ID))
+	sendMessage("927519630396891137",text)
 }
 
 func onMessageHandle(s *discordgo.Session, m *discordgo.MessageCreate) {

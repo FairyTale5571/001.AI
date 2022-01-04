@@ -21,12 +21,12 @@ func sendPrivateMessage(user string, m string) {
 	}
 }
 
-func sendConnectMessage() {
-
-}
-
-func sendLeaveMessage() {
-
+func sendMessage(channelId string, t string) {
+	_, err := s.ChannelMessageSend(channelId, t)
+	if err != nil {
+		logger.PrintLog("cant send message? %s",err.Error())
+		return
+	}
 }
 
 func sendPrivateEmbedMessage(user string, embed *discordgo.MessageEmbed) {
