@@ -1,10 +1,4 @@
 token: ""
 prefixCommand: "!"
-version: "1.0.1"
-database:
-  - "ip",
-  - "port",
-  - "databaseName",
-  - "user",
-  - "password"
-
+version: "1.0.3"
+sentryKey: ""
