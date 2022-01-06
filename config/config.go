@@ -11,6 +11,7 @@ type Cfg struct {
 	Token string `yaml:"token"`
 	Prefix string `yaml:"prefixCommand"`
 	Version string `yaml:"version"`
+	SentryKey string `yaml:"sentry_key"`
 }
 
 var conf = Cfg{}
