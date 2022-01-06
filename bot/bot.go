@@ -4,6 +4,7 @@ import (
 	"001.AI/config"
 	"001.AI/logger"
 	"github.com/bwmarrin/discordgo"
+	log "github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
 )
@@ -43,10 +44,45 @@ func Start() {
 	}
 	defer s.Close() 	// закроем сессию при завершении
 
+
+	for _,elem := range s.State.Guilds {
+		log.Printf("Guild: %s\n",elem.ID)
+		AddRemoveCommands(elem.ID)
+	}
 	logger.PrintLog("Start goroutines")
 	stop := make(chan os.Signal)
 	signal.Notify(stop, os.Interrupt)
 	<-stop
 	// Конец работы
 	logger.PrintLog("Gracefully shutdown\n************************************************************************\n\n")
+}
+
+func AddRemoveCommands(guildId string) {
+	logger.PrintLog("Init commands...")
+
+	cmd, err := s.ApplicationCommands(s.State.User.ID, guildId)
+	if err != nil {
+		logger.PrintLog(err.Error())
+	}
+
+	for _, elem := range cmd {
+		err := s.ApplicationCommandDelete(s.State.User.ID, guildId, elem.ID)
+		if err != nil {
+			logger.PrintLog("Cant delete command %v",elem.Name)
+			logger.PrintLog(err.Error())
+		}else{
+			logger.PrintLog("Command %v deleted",elem.Name)
+		}
+	}
+
+	for _, v := range commands {
+		_, err := s.ApplicationCommandCreate(s.State.User.ID, guildId, v)
+		if err != nil {
+			logger.PrintLog("Cannot create '%v' command: %v", v.Name, err)
+		}
+		logger.PrintLog("Command %v created", v.Name)
+	}
+	s.ApplicationCommandBulkOverwrite(s.State.User.ID, guildId, commands)
+
+	logger.PrintLog("Init commands finished")
 }
