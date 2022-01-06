@@ -30,6 +30,7 @@ func Start() {
 	s.AddHandler(onUserConnected)		// обработчик новых пользователей
 	s.AddHandler(onUserDisconnected)	// обработчик ливнувших пользователей
 	s.AddHandler(onMessageHandle)		// Обработчик сообщений
+	s.AddHandler(onCommandsCall)		// обработчик / команд
 
 	// Проверям работает ли бот
 	s.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {

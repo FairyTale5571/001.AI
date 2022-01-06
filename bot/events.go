@@ -25,6 +25,20 @@ func onUserDisconnected(s *discordgo.Session, u *discordgo.GuildMemberRemove) {
 	sendMessage("927519630396891137",text)
 }
 
+func onCommandsCall(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	switch i.Type {
+	case discordgo.InteractionApplicationCommand:
+		if h, ok := commandHandlers[i.ApplicationCommandData().Name]; ok {
+			h(s, i)
+		}
+	case discordgo.InteractionMessageComponent:
+
+		if h, ok := componentsHandlers[i.MessageComponentData().CustomID]; ok {
+			h(s, i)
+		}
+	}
+}
+
 func onMessageHandle(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if strings.HasPrefix(m.Content, config.GetPrefix()) {
 		if m.Author.ID == s.State.User.ID {
