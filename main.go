@@ -3,7 +3,6 @@ package main
 import (
 	"001.AI/bot"
 	"001.AI/config"
-	"001.AI/database"
 	"fmt"
 	"log"
 )
@@ -20,11 +19,7 @@ func main() {
 	log.Printf("001k AI will be started in few seconds\n")
 	log.Printf("v%s\n",config.GetVersion())
 
-	_, err = database.ConnectDatabase()
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
+	//InitSentry()
 	bot.Start()
 	return
 }
