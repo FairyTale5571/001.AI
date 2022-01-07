@@ -6,31 +6,14 @@ import (
 	"gorm.io/gorm"
 )
 
-var db *gorm.DB
 
-type RulesChannels struct {
-	gorm.Model
-	Id uint32
-	GuildId string
-	ChannelId string
-}
-
-type ConLeaveChannels struct {
-	gorm.Model
-
-	Id uint32
-	GuildId string
-	ChannelId string
-}
-
-type ConnectLogs struct {
-	gorm.Model
-
-	Id uint32
-	GuildId string
-	UserId string
-	UserName string
-	UserDiscriminator string
+func init() {
+	var err error
+	db, err = ConnectDatabase()
+	if err != nil {
+		logger.PrintLog("cant open database %s\n", err.Error())
+	}
+	logger.PrintLog("Database connected")
 }
 
 func ConnectDatabase() (*gorm.DB, error) {
@@ -40,13 +23,10 @@ func ConnectDatabase() (*gorm.DB, error) {
 		logger.PrintLog("cant open database %s\n", err.Error())
 		return db, err
 	}
-	db.AutoMigrate(RulesChannels{})
+	db.AutoMigrate(VerifiedRole{})
 	db.AutoMigrate(ConLeaveChannels{})
 	db.AutoMigrate(ConnectLogs{})
 
-	db.Create(&RulesChannels{})
-	db.Create(&RulesChannels{})
-	db.Create(&ConnectLogs{})
 
 	return db, nil
 }
