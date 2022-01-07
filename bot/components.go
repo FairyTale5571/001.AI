@@ -72,12 +72,18 @@ func printRules(s *discordgo.Session, i *discordgo.InteractionCreate) {
 							Disabled: false,
 							// CustomID is a thing telling Discord which data to send when this button will be pressed.
 							CustomID: "fd_yes",
+							Emoji: discordgo.ComponentEmoji{
+								Name:     "👍",
+							},
 						},
 						discordgo.Button{
 							Label:    "Не согласен",
 							Style:    discordgo.DangerButton,
 							Disabled: false,
 							CustomID: "fd_no",
+							Emoji: discordgo.ComponentEmoji{
+								Name: "👎",
+							},
 						},
 					},
 				},
