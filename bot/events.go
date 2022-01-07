@@ -3,6 +3,7 @@ package bot
 
 import (
 	"001.AI/config"
+	"001.AI/database"
 	"001.AI/logger"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
@@ -13,8 +14,9 @@ func onUserConnected(s *discordgo.Session, u *discordgo.GuildMemberAdd) {
 	user := u.Member.User
 	logger.PrintLog("New user connected %v#%v | ID: %v",user.Username, user.Discriminator, user.ID)
 	sendPrivateEmbedMessage(u.User.ID, generateWelcomeEmbed(u.User))
-	text := fmt.Sprintf("😟 Пользвователь %s#%s присоединился %s",user.Username, user.Discriminator, pingUser(user.ID))
+	text := fmt.Sprintf("😀 Пользвователь %s#%s присоединился %s",user.Username, user.Discriminator, pingUser(user.ID))
 	sendMessage("927519630396891137",text)
+	database.SetConnectLog(u.GuildID,user.ID,user.Username,user.Discriminator,"connected")
 }
 
 func onUserDisconnected(s *discordgo.Session, u *discordgo.GuildMemberRemove) {
@@ -23,6 +25,8 @@ func onUserDisconnected(s *discordgo.Session, u *discordgo.GuildMemberRemove) {
 
 	text := fmt.Sprintf("😟 Пользвователь %s#%s отсоединился %s",user.Username, user.Discriminator, pingUser(user.ID))
 	sendMessage("927519630396891137",text)
+	database.SetConnectLog(u.GuildID,user.ID,user.Username,user.Discriminator,"disconnected")
+
 }
 
 func onCommandsCall(s *discordgo.Session, i *discordgo.InteractionCreate) {
