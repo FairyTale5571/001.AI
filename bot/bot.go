@@ -27,10 +27,10 @@ func Start() {
 	s.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsAll)
 
 	// добавляем обработчики событий
-	s.AddHandler(onUserConnected)		// обработчик новых пользователей
-	s.AddHandler(onUserDisconnected)	// обработчик ливнувших пользователей
-	s.AddHandler(onMessageHandle)		// Обработчик сообщений
-	s.AddHandler(onCommandsCall)		// обработчик / команд
+	s.AddHandler(onUserConnected)    // обработчик новых пользователей
+	s.AddHandler(onUserDisconnected) // обработчик ливнувших пользователей
+	s.AddHandler(onMessageHandle)    // Обработчик сообщений
+	s.AddHandler(onCommandsCall)     // обработчик / команд
 
 	// Проверям работает ли бот
 	s.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
@@ -43,11 +43,10 @@ func Start() {
 		logger.PrintLog("Cannot open the session: %v", err)
 		return
 	}
-	defer s.Close() 	// закроем сессию при завершении
+	defer s.Close() // закроем сессию при завершении
 
-
-	for _,elem := range s.State.Guilds {
-		log.Printf("Guild: %s\n",elem.ID)
+	for _, elem := range s.State.Guilds {
+		log.Printf("Guild: %s\n", elem.ID)
 		AddRemoveCommands(elem.ID)
 	}
 	logger.PrintLog("Start goroutines")
@@ -69,10 +68,10 @@ func AddRemoveCommands(guildId string) {
 	for _, elem := range cmd {
 		err := s.ApplicationCommandDelete(s.State.User.ID, guildId, elem.ID)
 		if err != nil {
-			logger.PrintLog("Cant delete command %v",elem.Name)
+			logger.PrintLog("Cant delete command %v", elem.Name)
 			logger.PrintLog(err.Error())
-		}else{
-			logger.PrintLog("Command %v deleted",elem.Name)
+		} else {
+			logger.PrintLog("Command %v deleted", elem.Name)
 		}
 	}
 
