@@ -1,4 +1,3 @@
-
 package bot
 
 import (
@@ -12,20 +11,20 @@ import (
 
 func onUserConnected(s *discordgo.Session, u *discordgo.GuildMemberAdd) {
 	user := u.Member.User
-	logger.PrintLog("New user connected %v#%v | ID: %v",user.Username, user.Discriminator, user.ID)
+	logger.PrintLog("New user connected %v#%v | ID: %v", user.Username, user.Discriminator, user.ID)
 	sendPrivateEmbedMessage(u.User.ID, generateWelcomeEmbed(u.User))
-	text := fmt.Sprintf("😀 Пользвователь %s#%s присоединился %s",user.Username, user.Discriminator, pingUser(user.ID))
-	sendMessage("927519630396891137",text)
-	database.SetConnectLog(u.GuildID,user.ID,user.Username,user.Discriminator,"connected")
+	text := fmt.Sprintf("😀 Пользвователь %s#%s присоединился %s", user.Username, user.Discriminator, pingUser(user.ID))
+	sendConnectMessage(u.GuildID, text)
+	database.SetConnectLog(u.GuildID, user.ID, user.Username, user.Discriminator, "connected")
 }
 
 func onUserDisconnected(s *discordgo.Session, u *discordgo.GuildMemberRemove) {
 	user := u.Member.User
-	logger.PrintLog("User disconnected %v#%v | ID: %v",user.Username, user.Discriminator, user.ID)
+	logger.PrintLog("User disconnected %v#%v | ID: %v", user.Username, user.Discriminator, user.ID)
 
-	text := fmt.Sprintf("😟 Пользвователь %s#%s отсоединился %s",user.Username, user.Discriminator, pingUser(user.ID))
-	sendMessage("927519630396891137",text)
-	database.SetConnectLog(u.GuildID,user.ID,user.Username,user.Discriminator,"disconnected")
+	text := fmt.Sprintf("😟 Пользвователь %s#%s отсоединился %s", user.Username, user.Discriminator, pingUser(user.ID))
+	sendConnectMessage(u.GuildID, text)
+	database.SetConnectLog(u.GuildID, user.ID, user.Username, user.Discriminator, "disconnected")
 
 }
 
@@ -54,23 +53,27 @@ func onMessageHandle(s *discordgo.Session, m *discordgo.MessageCreate) {
 		for idx := range inputSplit {
 			if idx == 0 {
 				content = inputSplit[idx]
-			}else{
+			} else {
 				vars = append(vars, inputSplit[idx])
 			}
 		}
 		switch content {
-			case "!help":
-				printSimpleMessage(m.ChannelID, "Привет," + pingUser(m.Author.ID) + "!" +
-					" Это бот пана Киевского, царя криптовалютного мира!")
+		case "!help":
+			printSimpleMessage(m.ChannelID, "Привет,"+pingUser(m.Author.ID)+"!"+
+				" Это бот пана Киевского, царя криптовалютного мира!")
+		case "!d":
+			user := m.Author
+			text := fmt.Sprintf("😟 Пользвователь %s#%s отсоединился %s", user.Username, user.Discriminator, pingUser(user.ID))
+			sendConnectMessage(m.GuildID, text)
 		case "!e":
 			sendPrivateEmbedMessage(m.Author.ID, generateWelcomeEmbed(m.Author))
 		case "!s":
 			sendPrivateMessage(m.Author.ID,
-				"Привет," + pingUser(m.Author.ID) + "!\n" +
-				"Это бот пана Киевского, царя криптовалютного мира!\n" +
-				"Если ты хочешь быть таким же классным как Пан Сергей или успешным как Тёма\n" +
-				"Тогда заполни эту форму **ссылка тут будет** и мы начнем обучение как только так сразу" +
-				"")
+				"Привет,"+pingUser(m.Author.ID)+"!\n"+
+					"Это бот пана Киевского, царя криптовалютного мира!\n"+
+					"Если ты хочешь быть таким же классным как Пан Сергей или успешным как Тёма\n"+
+					"Тогда заполни эту форму **ссылка тут будет** и мы начнем обучение как только так сразу"+
+					"")
 		}
 	}
 }
