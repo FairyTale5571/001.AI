@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"001.AI/database"
 	"001.AI/logger"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
@@ -9,14 +10,14 @@ import (
 func sendPrivateMessage(user string, m string) {
 	channel, err := s.UserChannelCreate(user)
 	if err != nil {
-		logger.PrintLog("Cant open private channel\n" +
-			"%s\n",err.Error())
+		logger.PrintLog("Cant open private channel\n"+
+			"%s\n", err.Error())
 		return
 	}
 	_, err = s.ChannelMessageSend(channel.ID, m)
 	if err != nil {
-		logger.PrintLog("Cant send message in private channel\n" +
-			"%s\n",err.Error())
+		logger.PrintLog("Cant send message in private channel\n"+
+			"%s\n", err.Error())
 		return
 	}
 }
@@ -24,27 +25,41 @@ func sendPrivateMessage(user string, m string) {
 func sendMessage(channelId string, t string) {
 	_, err := s.ChannelMessageSend(channelId, t)
 	if err != nil {
-		logger.PrintLog("cant send message? %s",err.Error())
+		logger.PrintLog("cant send message? %s", err.Error())
 		return
+	}
+}
+
+func sendConnectMessage(guildId string, t string) {
+	channels, err := database.GetWelcomeChannelId(guildId)
+	if err != nil {
+		logger.PrintLog("get rule channel error: %s\n", err.Error())
+	}
+	if len(channels) == 0 {
+		logger.PrintLog("connect messages not configured\n")
+		return
+	}
+	for _, elem := range channels {
+		sendMessage(elem, t)
 	}
 }
 
 func sendPrivateEmbedMessage(user string, embed *discordgo.MessageEmbed) {
 	channel, err := s.UserChannelCreate(user)
 	if err != nil {
-		logger.PrintLog("Cant open private channel\n" +
-			"%s\n",err.Error())
+		logger.PrintLog("Cant open private channel\n"+
+			"%s\n", err.Error())
 		return
 	}
 	_, err = s.ChannelMessageSendEmbed(channel.ID, embed)
 	if err != nil {
-		logger.PrintLog("Cant send message in private channel\n" +
-			"%s\n",err.Error())
+		logger.PrintLog("Cant send message in private channel\n"+
+			"%s\n", err.Error())
 		return
 	}
 }
 
-func printSimpleMessage(c string,m string) (string,error) {
+func printSimpleMessage(c string, m string) (string, error) {
 	msg, err := s.ChannelMessageSend(c, m)
 	if err != nil {
 		logger.PrintLog("error print message")
@@ -54,27 +69,27 @@ func printSimpleMessage(c string,m string) (string,error) {
 }
 
 func generateWelcomeEmbed(m *discordgo.User) *discordgo.MessageEmbed {
-	
+
 	embed := &discordgo.MessageEmbed{
-		URL:         "https://platform.001k.trade/",
-		Type:        discordgo.EmbedTypeImage,
-		Title:       "Добро пожаловать!",
-		Description: "Привет, **"+m.Username+"**!\n" +
+		URL:   "https://platform.001k.trade/",
+		Type:  discordgo.EmbedTypeImage,
+		Title: "Добро пожаловать!",
+		Description: "Привет, **" + m.Username + "**!\n" +
 			"Рады тебя приветствовать в нашей большой команде трейдеров!\n" +
 			"Даем тебе план действий⤵️\n" +
 			"Первым делом тебе нужно ознакомиться с правилами, которые ты обязан соблюдать в нашем комьюнити (смотри канал **#правила**).\n" +
 			"Также настоятельно просим не менять свой ник в discord во избежание недоразумений в процессе обучения.\n" +
 			"Дальше приступай к изучению канала **#как-начать**\n" +
 			"Чтобы получить доступ к нашей платформе и материалам — заполни эту таблицу. Мы сделаем тебе аккаунт и скинем данные для входа.",
-		Timestamp:   "",
-		Color:       0x9300FF,
-		Footer:      &discordgo.MessageEmbedFooter{
-			Text:         "У тебя все получится!",
+		Timestamp: "",
+		Color:     0x9300FF,
+		Footer: &discordgo.MessageEmbedFooter{
+			Text: "У тебя все получится!",
 		},
-		Thumbnail:   &discordgo.MessageEmbedThumbnail{
-			URL:      "https://i.imgur.com/LJmTLap.png",
+		Thumbnail: &discordgo.MessageEmbedThumbnail{
+			URL: "https://i.imgur.com/LJmTLap.png",
 		},
-		Fields:      []*discordgo.MessageEmbedField{
+		Fields: []*discordgo.MessageEmbedField{
 			&discordgo.MessageEmbedField{
 				Name:   "Платформа",
 				Value:  "[Платформа](https://platform.001k.trade/)",
@@ -106,5 +121,5 @@ func generateWelcomeEmbed(m *discordgo.User) *discordgo.MessageEmbed {
 }
 
 func pingUser(id string) string {
-	return fmt.Sprintf("<@%v>",id)
+	return fmt.Sprintf("<@%v>", id)
 }
