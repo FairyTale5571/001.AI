@@ -2,18 +2,16 @@ package database
 
 import "fmt"
 
-func GetWelcomeChannelId(guildId string) (string,error) {
-	var ret string
-	tx := db.Exec("SELECT channel_id from con_leave_channels WHERE guild_id = ? LIMIT 1",guildId)
-
-	tx.Scan(&ret)
-	if ret != "" {
-		return ret, nil
-	}
-	return "", fmt.Errorf("welcome channel is undefined")
+func GetWelcomeChannelId(guildId string) ([]string, error) {
+	var ret []string
+	db.Table("con_leave_channels").Select("channel_id").Where("deleted_at is null and guild_id = ?", guildId).Scan(&ret)
+	fmt.Printf("get welcome chan: %s\n", ret)
+	return ret, nil
 }
 
-func GetRuleChannelId(guildId string) (string,error) {
-
-	return "", nil
+func GetVerifiedRoles(guildId string) ([]string, error) {
+	var ret []string
+	db.Table("verified_roles").Select("role_id").Where("deleted_at is null and guild_id = ?", guildId).Scan(&ret)
+	fmt.Printf("get welcome chan: %s\n", ret)
+	return ret, nil
 }

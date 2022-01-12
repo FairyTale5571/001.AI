@@ -6,7 +6,6 @@ import (
 	"gorm.io/gorm"
 )
 
-
 func init() {
 	var err error
 	db, err = ConnectDatabase()
@@ -18,7 +17,7 @@ func init() {
 
 func ConnectDatabase() (*gorm.DB, error) {
 
-	db, err := gorm.Open(sqlite.Open("001_database.db"), & gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("001_database.db"), &gorm.Config{})
 	if err != nil {
 		logger.PrintLog("cant open database %s\n", err.Error())
 		return db, err
@@ -26,7 +25,6 @@ func ConnectDatabase() (*gorm.DB, error) {
 	db.AutoMigrate(VerifiedRole{})
 	db.AutoMigrate(ConLeaveChannels{})
 	db.AutoMigrate(ConnectLogs{})
-
 
 	return db, nil
 }

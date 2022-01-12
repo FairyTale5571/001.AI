@@ -1,7 +1,5 @@
 package database
 
-import "time"
-
 func SetWelcomeChannel(guildId, channel string) {
 	db.Create(&ConLeaveChannels{
 		GuildId:   guildId,
@@ -9,9 +7,12 @@ func SetWelcomeChannel(guildId, channel string) {
 	})
 }
 
+func RemoveWelcomeChannel(guildId, channel string) {
+	db.Where("guild_id = ? and channel_id = ?", guildId, channel).Delete(&ConLeaveChannels{})
+}
+
 func SetConnectLog(guildId, userId, userName, userDiscriminator string, mode string) {
 	db.Create(&ConnectLogs{
-		Id: 			   time.Now().Unix(),
 		Type:              mode,
 		GuildId:           guildId,
 		UserId:            userId,
@@ -20,10 +21,13 @@ func SetConnectLog(guildId, userId, userName, userDiscriminator string, mode str
 	})
 }
 
-
 func SetVerifiedRole(guildId, roleId string) {
 	db.Create(&VerifiedRole{
 		GuildId: guildId,
 		RoleId:  roleId,
 	})
+}
+
+func RemoveVerifiedRole(guildId, roleId string) {
+	db.Where("guild_id = ? and role_id = ?", guildId, roleId).Delete(&VerifiedRole{})
 }
