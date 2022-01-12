@@ -6,16 +6,16 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-var(
+var (
 	componentsHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
 		"fd_yes": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			logger.PrintLog("component yes")
-			yesAnswer(true,s,i)
+			yesAnswer(true, s, i)
 			return
 		},
 		"fd_no": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			logger.PrintLog("component no")
-			yesAnswer(false,s,i)
+			yesAnswer(false, s, i)
 
 			return
 		},
@@ -23,22 +23,26 @@ var(
 )
 
 func yesAnswer(a bool, s *discordgo.Session, i *discordgo.InteractionCreate) {
-	cont := "Спасибо! Доступ к серверу выдан!"
+	var cont string
 	if !a {
 		cont = "Вам нужно согласится с правилами чтобы получить полный доступ к серверу"
+		removeVerifiedRoles(i.GuildID, i.Interaction.Member.User)
+	} else {
+		cont = "Спасибо! Доступ к серверу выдан!"
+		giveVerifiedRoles(i.GuildID, i.Interaction.Member.User)
 	}
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
 			Content: cont,
-			Flags: 1 << 6,
+			Flags:   1 << 6,
 		},
 	})
 	if err != nil {
-		logger.PrintLog("%s\n",err.Error())
+		logger.PrintLog("%s\n", err.Error())
 	}
 	if err := s.InteractionResponseDelete(s.State.User.ID, i.Interaction); err != nil {
-		fmt.Printf("error: %s\n",err.Error())
+		fmt.Printf("error: %s\n", err.Error())
 	}
 }
 
@@ -73,7 +77,7 @@ func printRules(s *discordgo.Session, i *discordgo.InteractionCreate) {
 							// CustomID is a thing telling Discord which data to send when this button will be pressed.
 							CustomID: "fd_yes",
 							Emoji: discordgo.ComponentEmoji{
-								Name:     "👍",
+								Name: "👍",
 							},
 						},
 						discordgo.Button{
@@ -91,6 +95,6 @@ func printRules(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		},
 	})
 	if err != nil {
-		fmt.Printf("%s\n",err.Error())
+		fmt.Printf("%s\n", err.Error())
 	}
 }
