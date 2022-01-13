@@ -6,8 +6,8 @@ var (
 	commands = []*discordgo.ApplicationCommand{
 		// print rules
 		{
-			Name:        "print-rules",
-			Description: "Распечатать правила и кнокпку",
+			Name:        "help-001",
+			Description: "Как мной пользоваться",
 			Version:     "1.0",
 		},
 		// set verified role
@@ -68,8 +68,8 @@ var (
 		},
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-		"print-rules": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			printRules(s, i)
+		"help-001": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			//printRules(s, i)
 		},
 		"set-verified-role": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			setVerifiedRole(s, i)
