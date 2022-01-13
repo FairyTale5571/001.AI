@@ -66,6 +66,27 @@ var (
 				},
 			},
 		},
+
+		{
+			Name:        "create-ticket",
+			Description: "Create Ticket",
+		},
+		{
+			Name:        "close-ticket",
+			Description: "Close ticket",
+		},
+		{
+			Name:        "add-user-to-ticket",
+			Description: "add user to ticket",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionUser,
+					Name:        "user-option",
+					Description: "User Option",
+					Required:    true,
+				},
+			},
+		},
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
 		"help-001": func(s *discordgo.Session, i *discordgo.InteractionCreate) {

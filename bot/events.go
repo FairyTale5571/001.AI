@@ -34,6 +34,9 @@ func onCommandsCall(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		if h, ok := commandHandlers[i.ApplicationCommandData().Name]; ok {
 			h(s, i)
 		}
+		if h, ok := ticketCommands[i.ApplicationCommandData().Name]; ok {
+			h(s, i)
+		}
 	case discordgo.InteractionMessageComponent:
 
 		if h, ok := componentsHandlers[i.MessageComponentData().CustomID]; ok {

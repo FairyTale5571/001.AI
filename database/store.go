@@ -31,3 +31,14 @@ type ConnectLogs struct {
 	UserName          string
 	UserDiscriminator string
 }
+
+type Tickets struct {
+	gorm.Model
+
+	Id                int64 `gorm:"primaryKey; not null"`
+	GuildId           string
+	UserId            string
+	UserName          string
+	UserDiscriminator string
+	ReasonToOpen      string
+}
