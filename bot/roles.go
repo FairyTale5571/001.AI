@@ -17,7 +17,6 @@ func isAdmin(user *discordgo.User, channel string) bool {
 }
 
 func giveVerifiedRoles(guildId string, user *discordgo.User) {
-	fmt.Printf("%s\n", user)
 	roles, err := database.GetVerifiedRoles(guildId)
 	if err != nil {
 		logger.PrintLog("get rule channel error: %s\n", err.Error())
@@ -27,7 +26,6 @@ func giveVerifiedRoles(guildId string, user *discordgo.User) {
 		return
 	}
 	for _, role := range roles {
-		fmt.Printf("role: %s|%s|%s\n", guildId, user.ID, role)
 		giveRole(guildId, user.ID, role)
 	}
 }
