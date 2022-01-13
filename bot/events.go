@@ -58,22 +58,14 @@ func onMessageHandle(s *discordgo.Session, m *discordgo.MessageCreate) {
 			}
 		}
 		switch content {
-		case "!help":
-			printSimpleMessage(m.ChannelID, "Привет,"+pingUser(m.Author.ID)+"!"+
-				" Это бот пана Киевского, царя криптовалютного мира!")
-		case "!d":
-			user := m.Author
-			text := fmt.Sprintf("😟 Пользвователь %s#%s отсоединился %s", user.Username, user.Discriminator, pingUser(user.ID))
-			sendConnectMessage(m.GuildID, text)
+		case "!print-rule":
+			printRules(m.ChannelID)
+			if err := s.ChannelMessageDelete(m.ChannelID, m.ID); err != nil {
+				logger.PrintLog("cant delete message %s\n", err.Error())
+			}
 		case "!e":
 			sendPrivateEmbedMessage(m.Author.ID, generateWelcomeEmbed(m.Author))
-		case "!s":
-			sendPrivateMessage(m.Author.ID,
-				"Привет,"+pingUser(m.Author.ID)+"!\n"+
-					"Это бот пана Киевского, царя криптовалютного мира!\n"+
-					"Если ты хочешь быть таким же классным как Пан Сергей или успешным как Тёма\n"+
-					"Тогда заполни эту форму **ссылка тут будет** и мы начнем обучение как только так сразу"+
-					"")
+			return
 		}
 	}
 }
