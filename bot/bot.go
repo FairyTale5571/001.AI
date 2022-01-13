@@ -65,22 +65,23 @@ func AddRemoveCommands(guildId string) {
 		logger.PrintLog(err.Error())
 	}
 
-	for _, elem := range cmd {
-		err := s.ApplicationCommandDelete(s.State.User.ID, guildId, elem.ID)
-		if err != nil {
-			logger.PrintLog("Cant delete command %v", elem.Name)
-			logger.PrintLog(err.Error())
-		} else {
-			logger.PrintLog("Command %v deleted", elem.Name)
-		}
-	}
-
+	insert := true
 	for _, v := range commands {
+		for _, elem := range cmd {
+			if elem == v {
+				insert = false
+				break
+			}
+		}
+		if !insert {
+			continue
+		}
 		_, err := s.ApplicationCommandCreate(s.State.User.ID, guildId, v)
 		if err != nil {
 			logger.PrintLog("Cannot create '%v' command: %v", v.Name, err)
 		}
 		logger.PrintLog("Command %v created", v.Name)
+
 	}
 	s.ApplicationCommandBulkOverwrite(s.State.User.ID, guildId, commands)
 
