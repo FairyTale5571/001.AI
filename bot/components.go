@@ -9,14 +9,11 @@ import (
 var (
 	componentsHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
 		"fd_yes": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			logger.PrintLog("component yes")
 			yesAnswer(true, s, i)
 			return
 		},
 		"fd_no": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			logger.PrintLog("component no")
 			yesAnswer(false, s, i)
-
 			return
 		},
 	}
