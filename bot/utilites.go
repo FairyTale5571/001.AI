@@ -51,10 +51,56 @@ func sendPrivateEmbedMessage(user string, embed *discordgo.MessageEmbed) {
 			"%s\n", err.Error())
 		return
 	}
-	_, err = s.ChannelMessageSendEmbed(channel.ID, embed)
+	msg, err := s.ChannelMessageSendEmbed(channel.ID, embed)
 	if err != nil {
 		logger.PrintLog("Cant send message in private channel\n"+
 			"%s\n", err.Error())
+		return
+	}
+
+	toEdit := discordgo.NewMessageEdit(channel.ID, msg.ID)
+	toEdit.Components = []discordgo.MessageComponent{
+		discordgo.ActionsRow{
+			Components: []discordgo.MessageComponent{
+				discordgo.Button{
+					Label: "ПЛАТФОРМА",
+					URL:   "https://platform.001k.trade/",
+					Style: discordgo.LinkButton,
+				},
+				discordgo.Button{
+					Label: "ЗАПОЛНИ ФОРМУ",
+					URL:   "https://forms.gle/as1vGdFkANdqKFUe8",
+					Style: discordgo.LinkButton,
+				},
+				discordgo.Button{
+					Label: "МЕТОДИЧКА",
+					URL:   "https://paper.dropbox.com/doc/D3BhdvMwZOMiBKQwl2bVI",
+					Style: discordgo.LinkButton,
+				},
+			},
+		},
+		discordgo.ActionsRow{
+			Components: []discordgo.MessageComponent{
+				discordgo.Button{
+					Label: "20% на Spot",
+					URL:   "https://www.binance.com/ru/register?ref=EZRRJ46M",
+					Style: discordgo.LinkButton,
+				},
+				discordgo.Button{
+					Label: "10% на Futures",
+					URL:   "https://www.binance.com/ru/futures/ref/37763047",
+					Style: discordgo.LinkButton,
+				},
+				discordgo.Button{
+					Label: "30$ для TradingView",
+					URL:   "https://ru.tradingview.com/gopro/?offer_id=10&aff_id=28995",
+					Style: discordgo.LinkButton,
+				},
+			},
+		},
+	}
+	if _, err := s.ChannelMessageEditComplex(toEdit); err != nil {
+		logger.PrintLog("error: cant edit private message: %s\n", err.Error())
 		return
 	}
 }
@@ -77,10 +123,17 @@ func generateWelcomeEmbed(m *discordgo.User) *discordgo.MessageEmbed {
 		Description: "Привет, **" + m.Username + "**!\n" +
 			"Рады тебя приветствовать в нашей большой команде трейдеров!\n" +
 			"Даем тебе план действий⤵️\n" +
-			"Первым делом тебе нужно ознакомиться с правилами, которые ты обязан соблюдать в нашем комьюнити (смотри канал **#правила**).\n" +
+			"Первым делом тебе нужно ознакомиться с правилами, которые ты обязан соблюдать в нашем комьюнити (смотри канал **" + pingChannel("536314966391914511") + "**).\n" +
 			"Также настоятельно просим не менять свой ник в discord во избежание недоразумений в процессе обучения.\n" +
-			"Дальше приступай к изучению канала **#как-начать**\n" +
-			"Чтобы получить доступ к нашей платформе и материалам — заполни эту таблицу. Мы сделаем тебе аккаунт и скинем данные для входа.",
+			"Дальше приступай к изучению канала **" + pingChannel("846679056463429652") + "**\n" +
+			"Чтобы получить доступ к нашей платформе и материалам — заполни форму по ссылке внизу. Мы сделаем тебе аккаунт и скинем данные для входа в течении 24 часов\n" +
+			"Сейчас рекомендуем полностью изучить наш discord, пройдись по всем каналам, посмотри как ведется работа на сервере. Также обрати внимание на канал " + pingChannel("846684805915869184") + ", где мы собрали самые популярные вопросы, которые у тебя могут возникнуть в процессе обучения. \n" +
+			"\nКогда ты получишь доступ к материалам, приступай к просмотру видео на платформе. Рекомендуем сначала посмотреть все видео, для того чтобы хорошо ориентироваться по материалам, а уже на втором круге делать все дз. Обязательно пиши заметки и веди рабочую тетрадь. \n" +
+			"Твоими менторами будет наша команда!\nПо поводу любых вопросов и проверки домашнего задания всегда можешь обращаться в ЛС " + "**@team**" + " (Finetiq, tema_ycpex, OS, LuckyTick, ABIL, kovalyov).\n" +
+			"Также, при регистрации по ссылкам ниже, ты получишь скидку на комиссию Binance, 10% на Futures и 20% на Spot\n" +
+			"И 30$ бонус от TradingView при регистрации по нашей ссылке" +
+			"\n\n" +
+			"Дай обратную связь, чтобы я удостоверился, что тебе всё понятно!)",
 		Timestamp: "",
 		Color:     0x9300FF,
 		Footer: &discordgo.MessageEmbedFooter{
@@ -89,37 +142,18 @@ func generateWelcomeEmbed(m *discordgo.User) *discordgo.MessageEmbed {
 		Thumbnail: &discordgo.MessageEmbedThumbnail{
 			URL: "https://i.imgur.com/LJmTLap.png",
 		},
-		Fields: []*discordgo.MessageEmbedField{
-			&discordgo.MessageEmbedField{
-				Name:   "Платформа",
-				Value:  "[Платформа](https://platform.001k.trade/)",
-				Inline: false,
-			},
-			&discordgo.MessageEmbedField{
-				Name:   "Заполни форму",
-				Value:  "[Форма](https://forms.gle/as1vGdFkANdqKFUe8)",
-				Inline: false,
-			},
-			&discordgo.MessageEmbedField{
-				Name:   "Методичка",
-				Value:  "[Методичка](https://paper.dropbox.com/doc/D3BhdvMwZOMiBKQwl2bVI)",
-				Inline: false,
-			},
-			&discordgo.MessageEmbedField{
-				Name:   "20% на Spot",
-				Value:  "[Binance Spot](https://www.binance.com/ru/register?ref=EZRRJ46M)",
-				Inline: false,
-			},
-			&discordgo.MessageEmbedField{
-				Name:   "10% на Futures",
-				Value:  "[Binance Futures](https://www.binance.com/ru/futures/ref/37763047)",
-				Inline: false,
-			},
-		},
 	}
 	return embed
 }
 
 func pingUser(id string) string {
 	return fmt.Sprintf("<@%v>", id)
+}
+
+func pingChannel(id string) string {
+	return fmt.Sprintf("<#%s>", id)
+}
+
+func pingRole(id string) string {
+	return fmt.Sprintf("<@&%s>", id)
 }
