@@ -14,3 +14,7 @@ func GetPrefix() string {
 func GetVersion() string {
 	return conf.Version
 }
+
+func GetSentry() string {
+	return conf.SentryKey
+}
