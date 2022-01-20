@@ -3,6 +3,7 @@ package bot
 import (
 	"001.AI/config"
 	"001.AI/database"
+	"001.AI/embed"
 	"001.AI/logger"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
@@ -71,4 +72,22 @@ func onMessageHandle(s *discordgo.Session, m *discordgo.MessageCreate) {
 			return
 		}
 	}
+}
+
+func CreateNewForm(body map[string]string) {
+	embed := embed.NewEmbed()
+	embed.SetTitle("Новая заявка на регистрацию")
+	embed.SetColor(0xFF0000)
+
+	var description string
+	sorted := sortMap(body)
+	for _, v := range sorted {
+		description += fmt.Sprintf("**%s**: ", v)
+		description += fmt.Sprintf("%s\n", body[v])
+	}
+
+	embed.SetDescription(description)
+	fmt.Printf("%d\n", len(body))
+	s.ChannelMessageSendEmbed("933477225842479115", embed.MessageEmbed)
+	fmt.Println("!!!")
 }
