@@ -5,6 +5,7 @@ import (
 	"001.AI/logger"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
+	"sort"
 )
 
 func sendPrivateMessage(user string, m string) {
@@ -66,16 +67,25 @@ func sendPrivateEmbedMessage(user string, embed *discordgo.MessageEmbed) {
 					Label: "ПЛАТФОРМА",
 					URL:   "https://platform.001k.trade/",
 					Style: discordgo.LinkButton,
+					Emoji: discordgo.ComponentEmoji{
+						ID: "932727415409635348",
+					},
 				},
 				discordgo.Button{
 					Label: "ЗАПОЛНИ ФОРМУ",
 					URL:   "https://forms.gle/as1vGdFkANdqKFUe8",
 					Style: discordgo.LinkButton,
+					Emoji: discordgo.ComponentEmoji{
+						Name: "ℹ",
+					},
 				},
 				discordgo.Button{
 					Label: "МЕТОДИЧКА",
 					URL:   "https://paper.dropbox.com/doc/D3BhdvMwZOMiBKQwl2bVI",
 					Style: discordgo.LinkButton,
+					Emoji: discordgo.ComponentEmoji{
+						Name: "📑",
+					},
 				},
 			},
 		},
@@ -85,16 +95,25 @@ func sendPrivateEmbedMessage(user string, embed *discordgo.MessageEmbed) {
 					Label: "20% на Spot",
 					URL:   "https://www.binance.com/ru/register?ref=EZRRJ46M",
 					Style: discordgo.LinkButton,
+					Emoji: discordgo.ComponentEmoji{
+						ID: "904592477137293382",
+					},
 				},
 				discordgo.Button{
 					Label: "10% на Futures",
 					URL:   "https://www.binance.com/ru/futures/ref/37763047",
 					Style: discordgo.LinkButton,
+					Emoji: discordgo.ComponentEmoji{
+						ID: "904592477137293382",
+					},
 				},
 				discordgo.Button{
 					Label: "30$ для TradingView",
 					URL:   "https://ru.tradingview.com/gopro/?offer_id=10&aff_id=28995",
 					Style: discordgo.LinkButton,
+					Emoji: discordgo.ComponentEmoji{
+						ID: "904592477430886450",
+					},
 				},
 			},
 		},
@@ -158,4 +177,14 @@ func pingChannel(id string) string {
 
 func pingRole(id string) string {
 	return fmt.Sprintf("<@&%s>", id)
+}
+
+func sortMap(m map[string]string) []string {
+	keys := make([]string, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	return keys
 }

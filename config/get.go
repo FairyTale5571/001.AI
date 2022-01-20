@@ -18,3 +18,7 @@ func GetVersion() string {
 func GetSentry() string {
 	return conf.SentryKey
 }
+
+func GetPort() string {
+	return conf.Port
+}
