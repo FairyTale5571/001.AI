@@ -2,13 +2,23 @@ package database
 
 import (
 	"gorm.io/gorm"
+	"time"
 )
 
 var db *gorm.DB
 
+type Users struct {
+	gorm.Model
+
+	GuildId          string
+	MemberId         string `gorm:"uniqueIndex"`
+	TimeConnect      time.Time
+	TimeEndSubscribe time.Time
+}
+
 type VerifiedRole struct {
 	gorm.Model
-	Id      int64 `gorm:"primaryKey; not null"`
+
 	GuildId string
 	RoleId  string `gorm:"uniqueIndex"`
 }
@@ -16,7 +26,13 @@ type VerifiedRole struct {
 type ConLeaveChannels struct {
 	gorm.Model
 
-	Id        int64 `gorm:"primaryKey; not null"`
+	GuildId   string
+	ChannelId string `gorm:"uniqueIndex"`
+}
+
+type FormsChannels struct {
+	gorm.Model
+
 	GuildId   string
 	ChannelId string `gorm:"uniqueIndex"`
 }
@@ -24,7 +40,6 @@ type ConLeaveChannels struct {
 type ConnectLogs struct {
 	gorm.Model
 
-	Id                int64 `gorm:"primaryKey; not null"`
 	Type              string
 	GuildId           string
 	UserId            string
@@ -32,10 +47,16 @@ type ConnectLogs struct {
 	UserDiscriminator string
 }
 
+type Alerts struct {
+	gorm.Model
+
+	GuildId   string
+	ChannelId string
+}
+
 type Tickets struct {
 	gorm.Model
 
-	Id                int64 `gorm:"primaryKey; not null"`
 	GuildId           string
 	UserId            string
 	UserName          string

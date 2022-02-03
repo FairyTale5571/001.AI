@@ -66,7 +66,32 @@ var (
 				},
 			},
 		},
-
+		// set-channel-forms
+		{
+			Name:        "set-channel-forms",
+			Description: "Установить канал для логов с формы регистрации",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionChannel,
+					Name:        "channel-option",
+					Description: "Channel option",
+					Required:    true,
+				},
+			},
+		},
+		// set-channel-crypto
+		{
+			Name:        "set-channel-crypto",
+			Description: "Установить канал для детекта цены BTC-USDT",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionChannel,
+					Name:        "channel-option",
+					Description: "Channel option",
+					Required:    true,
+				},
+			},
+		},
 		{
 			Name:        "create-ticket",
 			Description: "Create Ticket",
@@ -90,7 +115,10 @@ var (
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
 		"help-001": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			//printRules(s, i)
+			getMyPermission(i.Interaction.User, i.Interaction.ChannelID)
+		},
+		"set-channel-forms": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			setFormChannel(s, i)
 		},
 		"set-verified-role": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			setVerifiedRole(s, i)

@@ -22,3 +22,26 @@ func GetSentry() string {
 func GetPort() string {
 	return conf.Port
 }
+
+func GetTwitchToken() string {
+	return conf.TwitchToken
+}
+
+type dbStruct struct {
+	Ip       string
+	Port     int
+	Database string
+	User     string
+	Password string
+}
+
+func GetDB() dbStruct {
+	ret := dbStruct{
+		Ip:       conf.Ip,
+		Port:     conf.DbPort,
+		Database: conf.Database,
+		User:     conf.User,
+		Password: conf.Password,
+	}
+	return ret
+}

@@ -28,6 +28,20 @@ func SetVerifiedRole(guildId, roleId string) {
 	})
 }
 
+func SetFormChannel(guildId, channelId string) {
+	db.Create(&FormsChannels{
+		GuildId:   guildId,
+		ChannelId: channelId,
+	})
+}
+
+func SetAlertChannel(guildId, channelId string) {
+	db.Create(&Alerts{
+		GuildId:   guildId,
+		ChannelId: channelId,
+	})
+}
+
 func RemoveVerifiedRole(guildId, roleId string) {
 	db.Where("guild_id = ? and role_id = ?", guildId, roleId).Delete(&VerifiedRole{})
 }

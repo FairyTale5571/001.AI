@@ -1,8 +1,10 @@
 package database
 
 import (
+	"001.AI/config"
 	"001.AI/logger"
-	"gorm.io/driver/sqlite"
+	"fmt"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
@@ -17,14 +19,22 @@ func init() {
 
 func ConnectDatabase() (*gorm.DB, error) {
 
-	db, err := gorm.Open(sqlite.Open("001_database.db"), &gorm.Config{})
+	dbc := config.GetDB()
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		dbc.User, dbc.Password, dbc.Ip, dbc.Port, dbc.Database)
+	db, err := gorm.Open(mysql.New(
+		mysql.Config{
+			DSN: dsn,
+		},
+	))
 	if err != nil {
-		logger.PrintLog("cant open database %s\n", err.Error())
-		return db, err
+		panic(err)
 	}
 	db.AutoMigrate(VerifiedRole{})
 	db.AutoMigrate(ConLeaveChannels{})
 	db.AutoMigrate(ConnectLogs{})
+	db.AutoMigrate(FormsChannels{})
+	db.AutoMigrate(Users{})
 
 	return db, nil
 }
