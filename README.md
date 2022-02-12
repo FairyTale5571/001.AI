@@ -13,3 +13,4 @@ Discord bot for 001k Trade Discord
 
 /set-channel-forms - Установить канал для логов с формы регистрации
 
+!print-rule - Распечатать правила в этом канале
