@@ -39,6 +39,6 @@ func unmarshallForm(c *gin.Context) {
 		return
 	}
 	fmt.Println(body)
-
 	bot.CreateNewForm(body)
+	c.JSON(200, nil)
 }
