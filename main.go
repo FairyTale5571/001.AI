@@ -11,7 +11,6 @@ import (
 
 func main() {
 	go CreateGin()
-
 	err := sentry.Init(sentry.ClientOptions{
 		Dsn: config.GetSentry(),
 		TracesSampler: sentry.TracesSamplerFunc(func(ctx sentry.SamplingContext) sentry.Sampled {
@@ -26,6 +25,7 @@ func main() {
 
 	fmt.Printf("\n   ____  ____ ___  ___    ____\n  / __ \\/ __ <  / /   |  /  _/\n / / / / / / / / / /| |  / /  \n/ /_/ / /_/ / / / ___ |_/ /   \n\\____/\\____/_(_)_/  |_/___/   \n                              \n")
 	log.Printf("001k AI will be started in few seconds\n")
+	//log.Printf("telegram? %v\n", tg.CheckTG())
 	log.Printf("v%s\n", config.GetVersion())
 	//InitSentry()
 	bot.Start()
