@@ -115,7 +115,7 @@ var (
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
 		"help-001": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			getMyPermission(i.Interaction.User, i.Interaction.ChannelID)
+			help(s, i)
 		},
 		"set-channel-forms": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			setFormChannel(s, i)

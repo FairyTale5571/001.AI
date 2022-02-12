@@ -188,3 +188,93 @@ func sortMap(m map[string]string) []string {
 
 	return keys
 }
+
+func getAllUsers(chanel, guild string) {
+
+	var lastId = ""
+	var ret = "Список должников: \n"
+	for {
+		fmt.Printf("collect all users, waiting...\n")
+		members, err := s.GuildMembers(guild, lastId, 1000)
+		if err != nil {
+			fmt.Printf("cant get all users %s\n", err.Error())
+			break
+		}
+		lastId = members[len(members)-1].User.ID
+		for _, member := range members {
+			if member.JoinedAt.Unix() > member.JoinedAt.Add(Year*1).Unix() {
+				continue
+			}
+			ret += fmt.Sprintf("Пользователь: %s#%s | Присоединился: %v",
+				member.User.Username,
+				member.User.Discriminator,
+				member.JoinedAt.Format("2006-01-02 15:01:05"),
+			)
+			ret += fmt.Sprintf("\n")
+		}
+		if len(members) < 1000 {
+			fmt.Printf("users < 1000 | finish \n")
+			break
+		}
+	}
+	fmt.Printf("%s\n", ret)
+	printSimpleMessage(chanel, ret)
+}
+
+func help(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	emb := &discordgo.MessageEmbed{
+		Type:  discordgo.EmbedTypeImage,
+		Title: "Как пользваться ботом?",
+		Description: "Доступные команды:\n" +
+			"**/help-001** - это меню\n" +
+			"**/set-channel-forms** - установить канал для приема регистраций формы\n" +
+			"**/set-verified-role** - установить роль, которая будет выдаваться при приеме правил\n" +
+			"**/remove-verified-role** - уберет роль которая выдается при приеме правил\n" +
+			"**/set-welcome-channel** - установить канал для логов новых подключений и/или отключений\n" +
+			"**!print-rule** - распечатать правила с двумя кнопками\n" +
+			"Пока что это все )",
+		Color: 0x00FFFF,
+		Image: &discordgo.MessageEmbedImage{URL: "https://i.imgur.com/LJmTLap.png"},
+		Author: &discordgo.MessageEmbedAuthor{
+			Name: "001.AI",
+		},
+		Footer: &discordgo.MessageEmbedFooter{
+			Text: "Developed by FairyTale#5571",
+		},
+	}
+
+	if err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Embeds: []*discordgo.MessageEmbed{
+				emb,
+			},
+			Flags: 1 << 6,
+		},
+	}); err != nil {
+		fmt.Printf("cant create help embed\n")
+		return
+	}
+}
+
+func sendImage(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	text := i.ApplicationCommandData().Options[0].StringValue()
+	fmt.Printf("ready to send image\n")
+	image := img.CreateImage(text)
+	if image == nil {
+		return
+	}
+
+	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Files: []*discordgo.File{
+				{
+					Name:        image.Name(),
+					ContentType: "image",
+					Reader:      image,
+				},
+			},
+		},
+	})
+}
