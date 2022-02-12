@@ -45,3 +45,7 @@ func GetDB() dbStruct {
 	}
 	return ret
 }
+
+func GetTelegramToken() string {
+	return conf.TelegramToken
+}

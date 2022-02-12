@@ -17,12 +17,13 @@ func init() {
 }
 
 type Cfg struct {
-	Token       string `yaml:"token"`
-	Prefix      string `yaml:"prefixCommand"`
-	Version     string `yaml:"version"`
-	SentryKey   string `yaml:"sentry_key"`
-	Port        string `yaml:"port"`
-	TwitchToken string `yaml:"twitch_token"`
+	Token         string `yaml:"token"`
+	Prefix        string `yaml:"prefixCommand"`
+	Version       string `yaml:"version"`
+	SentryKey     string `yaml:"sentry_key"`
+	Port          string `yaml:"port"`
+	TwitchToken   string `yaml:"twitch_token"`
+	TelegramToken string `yaml:"telegram_token"`
 
 	Ip       string `yaml:"ip"`
 	DbPort   int    `yaml:"dbPort"`
