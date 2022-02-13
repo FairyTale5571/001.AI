@@ -80,15 +80,17 @@ func printRules(chanelId string) {
 						Name: "👍",
 					},
 				},
-				discordgo.Button{
-					Label:    "Не согласен",
-					Style:    discordgo.DangerButton,
-					Disabled: false,
-					CustomID: "fd_no",
-					Emoji: discordgo.ComponentEmoji{
-						Name: "👎",
+				/*
+					discordgo.Button{
+						Label:    "Не согласен",
+						Style:    discordgo.DangerButton,
+						Disabled: false,
+						CustomID: "fd_no",
+						Emoji: discordgo.ComponentEmoji{
+							Name: "👎",
+						},
 					},
-				},
+				*/
 			},
 		},
 	}
