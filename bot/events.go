@@ -46,10 +46,16 @@ func onCommandsCall(s *discordgo.Session, i *discordgo.InteractionCreate) {
 }
 
 func onMessageHandle(s *discordgo.Session, m *discordgo.MessageCreate) {
+	// if private message
+	if m.GuildID == "" {
+		sendPrivateMessageError(m)
+	}
 	if strings.HasPrefix(m.Content, config.GetPrefix()) {
 		if m.Author.ID == s.State.User.ID {
+			fmt.Printf("i am author\n")
 			return
 		}
+
 		var vars []string
 		var content string
 		inputSplit := strings.Split(m.Content, " ")

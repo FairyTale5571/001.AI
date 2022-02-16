@@ -139,7 +139,7 @@ func generateWelcomeEmbed(m *discordgo.User) *discordgo.MessageEmbed {
 		URL:   "https://platform.001k.trade/",
 		Type:  discordgo.EmbedTypeImage,
 		Title: "Добро пожаловать!",
-		Description: "Привет, **" + m.Username + "**!\n" +
+		Description: "Привет, **" + m.Username + "**, я Бот команды **001 Trading**!\n" +
 			"Рады тебя приветствовать в нашей большой команде трейдеров!\n" +
 			"Даем тебе план действий⤵️\n" +
 			"Первым делом тебе нужно ознакомиться с правилами, которые ты обязан соблюдать в нашем комьюнити (смотри канал **" + pingChannel("536314966391914511") + "**).\n" +
@@ -152,9 +152,7 @@ func generateWelcomeEmbed(m *discordgo.User) *discordgo.MessageEmbed {
 			"\nТвоими менторами будет наша команда!\n" +
 			"По поводу любых вопросов и проверки домашнего задания всегда можешь обращаться в ЛС " + "**@team**" + " (Finetiq, tema_ycpex, OS, LuckyTick, ABIL, kovalyov).\n" +
 			"\nТакже, при регистрации по ссылкам ниже, ты получишь скидку на комиссию Binance, 10% на Futures и 20% на Spot\n" +
-			"И 30$ бонус от TradingView при регистрации по нашей ссылке" +
-			"\n\n" +
-			"Дай обратную связь, чтобы я удостоверился, что тебе всё понятно!)",
+			"И 30$ бонус от TradingView при регистрации по нашей ссылке",
 		Timestamp: "",
 		Color:     0x9300FF,
 		Footer: &discordgo.MessageEmbedFooter{
@@ -173,10 +171,6 @@ func pingUser(id string) string {
 
 func pingChannel(id string) string {
 	return fmt.Sprintf("<#%s>", id)
-}
-
-func pingRole(id string) string {
-	return fmt.Sprintf("<@&%s>", id)
 }
 
 func sortMap(m map[string]string) []string {
@@ -277,4 +271,32 @@ func sendImage(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			},
 		},
 	})
+}
+
+func sendPrivateMessageError(m *discordgo.MessageCreate) {
+	channel, err := s.UserChannelCreate(m.Author.ID)
+	if err != nil {
+		fmt.Printf("Cant open private channel\n"+
+			"%s\n", err.Error())
+		return
+	}
+	embed := &discordgo.MessageEmbed{
+		Type:   discordgo.EmbedTypeImage,
+		Author: &discordgo.MessageEmbedAuthor{Name: "001.AI"},
+		Color:  0x00FFFF,
+		Title:  "Я просто бот",
+		Description: "Извини, пока что я тебя не понимаю, как только научусь, ты узнаешь об этом первый!\n" +
+			"По поводу любых вопросов и проверки домашнего задания всегда можешь обращаться в ЛС " + "**@team**" + " (Finetiq, tema_ycpex, OS, LuckyTick, ABIL, kovalyov).\n",
+	}
+
+	_, err = s.ChannelMessageSendEmbed(channel.ID, embed)
+	if err != nil {
+		fmt.Printf("Cant send message in private channel\n"+
+			"%s\n", err.Error())
+		return
+	}
+}
+
+func collectUser(user *discordgo.Member) {
+	database.InsertUser(user)
 }
