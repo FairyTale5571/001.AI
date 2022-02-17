@@ -79,6 +79,18 @@ var (
 				},
 			},
 		},
+		{
+			Name:        "send-welcome",
+			Description: "send-welcome",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionUser,
+					Name:        "user-option",
+					Description: "User Option",
+					Required:    true,
+				},
+			},
+		},
 		// set-channel-crypto
 		{
 			Name:        "set-channel-crypto",
@@ -131,6 +143,10 @@ var (
 		},
 		"remove-welcome-channel": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			removeWelcomeChannel(s, i)
+		},
+		"send-welcome": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			m := i.ApplicationCommandData().Options[0].UserValue(nil)
+			sendPrivateEmbedMessage(m.ID, generateWelcomeEmbed(m))
 		},
 	}
 )
