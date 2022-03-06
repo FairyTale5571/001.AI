@@ -9,7 +9,11 @@ import (
 	"time"
 )
 
+const serviceName = "001AI"
+const serviceDescription = "001.AI Discord Bot"
+
 func main() {
+
 	go CreateGin()
 	err := sentry.Init(sentry.ClientOptions{
 		Dsn: config.GetSentry(),
