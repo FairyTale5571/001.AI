@@ -47,7 +47,7 @@ func Start() {
 
 	for _, elem := range s.State.Guilds {
 		log.Printf("Guild: %s\n", elem.ID)
-		AddRemoveCommands(elem.ID)
+		go addRemoveCommands(elem.ID)
 	}
 	logger.PrintLog("Start goroutines")
 	stop := make(chan os.Signal)
@@ -57,7 +57,7 @@ func Start() {
 	logger.PrintLog("Gracefully shutdown\n************************************************************************\n\n")
 }
 
-func AddRemoveCommands(guildId string) {
+func addRemoveCommands(guildId string) {
 	logger.PrintLog("Init commands...")
 
 	cmd, err := s.ApplicationCommands(s.State.User.ID, guildId)
