@@ -12,10 +12,6 @@ var (
 			yesAnswer(true, s, i)
 			return
 		},
-		"fd_no": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			yesAnswer(false, s, i)
-			return
-		},
 	}
 )
 
@@ -58,45 +54,33 @@ func printRules(chanelId string) {
 		"7. НЕ пытайтесь продавать какие-либо продукты участникам.\n\n" +
 		"8. НЕ публикуйте такие вещи, как «Покупайте монету XYZ, она взорвется / она будет расти!» «Не пропустите!» И т д. Комментарии, подобные этим, будут истолкованы как имеющие скрытый мотив или создающие FOMO." +
 		"```")
-	msg, err := s.ChannelMessageSend(chanelId, rules)
+
+	data := &discordgo.MessageSend{
+		Content: rules,
+		Components: []discordgo.MessageComponent{
+			discordgo.ActionsRow{
+				Components: []discordgo.MessageComponent{
+					discordgo.Button{
+						// Label is what the user will see on the button.
+						Label: "Согласен",
+						// Style provides coloring of the button. There are not so many styles tho.
+						Style: discordgo.SuccessButton,
+						// Disabled allows bot to disable some buttons for users.
+						Disabled: false,
+						// CustomID is a thing telling Discord which data to send when this button will be pressed.
+						CustomID: "fd_yes",
+						Emoji: discordgo.ComponentEmoji{
+							Name: "👍",
+						},
+					},
+				},
+			},
+		},
+	}
+
+	_, err := s.ChannelMessageSendComplex(chanelId, data)
 	if err != nil {
 		logger.PrintLog("cant print rules %s\n", err.Error())
 		return
 	}
-	toEdit := discordgo.NewMessageEdit(chanelId, msg.ID)
-	toEdit.Components = []discordgo.MessageComponent{
-		discordgo.ActionsRow{
-			Components: []discordgo.MessageComponent{
-				discordgo.Button{
-					// Label is what the user will see on the button.
-					Label: "Согласен",
-					// Style provides coloring of the button. There are not so many styles tho.
-					Style: discordgo.SuccessButton,
-					// Disabled allows bot to disable some buttons for users.
-					Disabled: false,
-					// CustomID is a thing telling Discord which data to send when this button will be pressed.
-					CustomID: "fd_yes",
-					Emoji: discordgo.ComponentEmoji{
-						Name: "👍",
-					},
-				},
-				/*
-					discordgo.Button{
-						Label:    "Не согласен",
-						Style:    discordgo.DangerButton,
-						Disabled: false,
-						CustomID: "fd_no",
-						Emoji: discordgo.ComponentEmoji{
-							Name: "👎",
-						},
-					},
-				*/
-			},
-		},
-	}
-	if _, err = s.ChannelMessageEditComplex(toEdit); err != nil {
-		logger.PrintLog("cant edit message %s\n")
-		return
-	}
-
 }
