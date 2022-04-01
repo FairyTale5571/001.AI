@@ -2,26 +2,12 @@ package bot
 
 import (
 	"001.AI/database"
+	"001.AI/img"
 	"001.AI/logger"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"sort"
 )
-
-func sendPrivateMessage(user string, m string) {
-	channel, err := s.UserChannelCreate(user)
-	if err != nil {
-		logger.PrintLog("Cant open private channel\n"+
-			"%s\n", err.Error())
-		return
-	}
-	_, err = s.ChannelMessageSend(channel.ID, m)
-	if err != nil {
-		logger.PrintLog("Cant send message in private channel\n"+
-			"%s\n", err.Error())
-		return
-	}
-}
 
 func sendMessage(channelId string, t string) {
 	_, err := s.ChannelMessageSend(channelId, t)
@@ -124,15 +110,6 @@ func sendPrivateEmbedMessage(user string, embed *discordgo.MessageEmbed) {
 	}
 }
 
-func printSimpleMessage(c string, m string) (string, error) {
-	msg, err := s.ChannelMessageSend(c, m)
-	if err != nil {
-		logger.PrintLog("error print message")
-		return "", err
-	}
-	return msg.ID, nil
-}
-
 func generateWelcomeEmbed(m *discordgo.User) *discordgo.MessageEmbed {
 
 	embed := &discordgo.MessageEmbed{
@@ -183,10 +160,10 @@ func sortMap(m map[string]string) []string {
 	return keys
 }
 
-func getAllUsers(chanel, guild string) {
+func getAllUsers(guild string) []*discordgo.Member {
 
 	var lastId = ""
-	var ret = "Список должников: \n"
+	var ret []*discordgo.Member
 	for {
 		fmt.Printf("collect all users, waiting...\n")
 		members, err := s.GuildMembers(guild, lastId, 1000)
@@ -196,23 +173,14 @@ func getAllUsers(chanel, guild string) {
 		}
 		lastId = members[len(members)-1].User.ID
 		for _, member := range members {
-			if member.JoinedAt.Unix() > member.JoinedAt.Add(Year*1).Unix() {
-				continue
-			}
-			ret += fmt.Sprintf("Пользователь: %s#%s | Присоединился: %v",
-				member.User.Username,
-				member.User.Discriminator,
-				member.JoinedAt.Format("2006-01-02 15:01:05"),
-			)
-			ret += fmt.Sprintf("\n")
+			ret = append(ret, member)
 		}
 		if len(members) < 1000 {
 			fmt.Printf("users < 1000 | finish \n")
 			break
 		}
 	}
-	fmt.Printf("%s\n", ret)
-	printSimpleMessage(chanel, ret)
+	return ret
 }
 
 func help(s *discordgo.Session, i *discordgo.InteractionCreate) {
