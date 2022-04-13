@@ -72,6 +72,8 @@ func onMessageHandle(s *discordgo.Session, m *discordgo.MessageCreate) {
 			if err := s.ChannelMessageDelete(m.ChannelID, m.ID); err != nil {
 				logger.PrintLog("cant delete message %s\n", err.Error())
 			}
+		case "!tickers":
+			printPrices(m.GuildID, m.ChannelID)
 		case "!w":
 			getAllUsers(m.ChannelID, m.GuildID)
 		case "!e":
