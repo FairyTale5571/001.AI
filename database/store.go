@@ -10,10 +10,10 @@ var db *gorm.DB
 type Users struct {
 	gorm.Model
 
-	GuildId          string
-	MemberId         string `gorm:"uniqueIndex"`
-	TimeConnect      time.Time
-	TimeEndSubscribe time.Time
+	UserId            string
+	UserName          string
+	UserDiscriminator string
+	ConnectDate       time.Time
 }
 
 type VerifiedRole struct {

@@ -1,5 +1,9 @@
 package database
 
+import (
+	"github.com/bwmarrin/discordgo"
+)
+
 func SetWelcomeChannel(guildId, channel string) {
 	db.Create(&ConLeaveChannels{
 		GuildId:   guildId,
@@ -33,6 +37,22 @@ func SetFormChannel(guildId, channelId string) {
 		GuildId:   guildId,
 		ChannelId: channelId,
 	})
+}
+
+func InsertUser(user *discordgo.Member) {
+	//var ifExist bool
+	//db.Table("users").Select("user_id").Select("guild_id")
+	//db.Select()
+	//
+	//u := user.User
+	//db.Create(&Users{
+	//	GuildId:           user.GuildID,
+	//	UserId:            u.ID,
+	//	UserName:          u.Username,
+	//	UserDiscriminator: u.Discriminator,
+	//	ConnectDate:       user.JoinedAt,
+	//})
+	//
 }
 
 func SetAlertChannel(guildId, channelId string) {

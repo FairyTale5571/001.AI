@@ -7,11 +7,14 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func isAdmin(user *discordgo.User, channel string) bool {
-	_, err := s.UserChannelPermissions(user.ID, channel)
+func isAdmin(state *discordgo.State, user *discordgo.User, channel string) bool {
+	permission, err := state.UserChannelPermissions(user.ID, channel)
 	if err != nil {
 		logger.PrintLog("cant check permission %s\n", err.Error())
 		return false
+	}
+	if permission == 8 {
+		return true
 	}
 	return false
 }

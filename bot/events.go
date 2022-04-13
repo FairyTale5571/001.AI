@@ -11,6 +11,7 @@ import (
 
 func onUserConnected(s *discordgo.Session, u *discordgo.GuildMemberAdd) {
 	user := u.Member.User
+	collectUser(u.Member)
 	logger.PrintLog("New user connected %v#%v | ID: %v", user.Username, user.Discriminator, user.ID)
 	sendPrivateEmbedMessage(u.User.ID, generateWelcomeEmbed(u.User))
 	text := fmt.Sprintf("😀 Пользвователь %s#%s присоединился %s", user.Username, user.Discriminator, pingUser(user.ID))
@@ -75,7 +76,9 @@ func onMessageHandle(s *discordgo.Session, m *discordgo.MessageCreate) {
 		case "!tickers":
 			printPrices(m.GuildID, m.ChannelID)
 		case "!w":
-			getAllUsers(m.ChannelID, m.GuildID)
+			for _, member := range getAllUsers(m.GuildID) {
+				collectUser(member)
+			}
 		case "!e":
 			sendPrivateEmbedMessage(m.Author.ID, generateWelcomeEmbed(m.Author))
 			return

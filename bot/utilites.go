@@ -2,12 +2,20 @@ package bot
 
 import (
 	"001.AI/database"
-	"001.AI/img"
 	"001.AI/logger"
+	"encoding/json"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"sort"
+	"strings"
 )
+
+func clearMessages(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	//lenMsg := i.Interaction.ApplicationCommandData().Options[0].IntValue()
+	go func() {
+
+	}()
+}
 
 func sendMessage(channelId string, t string) {
 	_, err := s.ChannelMessageSend(channelId, t)
