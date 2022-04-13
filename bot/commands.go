@@ -1,15 +1,58 @@
 package bot
 
-import "github.com/bwmarrin/discordgo"
+import (
+	"github.com/bwmarrin/discordgo"
+)
 
 var (
 	commands = []*discordgo.ApplicationCommand{
-		// print rules
+		// help-001
 		{
 			Name:        "help-001",
 			Description: "Как мной пользоваться",
 			Version:     "1.0",
 		},
+		// join
+		{
+			Name:        "join",
+			Description: "Подключись к голосовому каналу",
+			Version:     "1.0",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionChannel,
+					Name:        "voice",
+					Description: "Укажите канал",
+					Required:    true,
+				},
+			},
+		},
+		// disconnect
+		{
+			Name:        "disconnect",
+			Description: "Отключиться от голосового канала",
+			Version:     "1.0",
+		},
+		// start-record
+		{
+			Name:        "start-record",
+			Description: "Начать запись",
+			Version:     "1.0",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "name-record",
+					Description: "Введите название записи",
+					Required:    false,
+				},
+			},
+		},
+		// stop-record
+		{
+			Name:        "stop-record",
+			Description: "Остановить запись",
+			Version:     "1.0",
+		},
+		// add-ticker
 		{
 			Name:        "add-ticker",
 			Description: "Добавить тикер для ежедневного отчета",
@@ -23,6 +66,7 @@ var (
 				},
 			},
 		},
+		// ticker
 		{
 			Name:        "ticker",
 			Description: "Получить значение прямо сейчас",
@@ -105,6 +149,7 @@ var (
 				},
 			},
 		},
+		// send-welcome
 		{
 			Name:        "send-welcome",
 			Description: "send-welcome",
@@ -117,39 +162,7 @@ var (
 				},
 			},
 		},
-		// set-channel-crypto
-		{
-			Name:        "set-channel-crypto",
-			Description: "Установить канал для детекта цены BTC-USDT",
-			Options: []*discordgo.ApplicationCommandOption{
-				{
-					Type:        discordgo.ApplicationCommandOptionChannel,
-					Name:        "channel-option",
-					Description: "Channel option",
-					Required:    true,
-				},
-			},
-		},
-		{
-			Name:        "create-ticket",
-			Description: "Create Ticket",
-		},
-		{
-			Name:        "close-ticket",
-			Description: "Close ticket",
-		},
-		{
-			Name:        "add-user-to-ticket",
-			Description: "add user to ticket",
-			Options: []*discordgo.ApplicationCommandOption{
-				{
-					Type:        discordgo.ApplicationCommandOptionUser,
-					Name:        "user-option",
-					Description: "User Option",
-					Required:    true,
-				},
-			},
-		},
+		// clear
 		{
 			Name:        "clear",
 			Description: "удалить сообщения",
@@ -164,33 +177,20 @@ var (
 		},
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-		"clear": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			clearMessages(s, i)
-		},
-		"add-ticker": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			addTicker(s, i)
-		},
-		"ticker": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			printTicker(s, i)
-		},
-		"help-001": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			help(s, i)
-		},
-		"set-channel-forms": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			setFormChannel(s, i)
-		},
-		"set-verified-role": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			setVerifiedRole(s, i)
-		},
-		"remove-verified-role": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			removeVerifiedRole(s, i)
-		},
-		"set-welcome-channel": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			setWelcomeChannel(s, i)
-		},
-		"remove-welcome-channel": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			removeWelcomeChannel(s, i)
-		},
+
+		"join":                   joinVoice,
+		"disconnect":             disconnectVoice,
+		"start-record":           startRecord,
+		"stop-record":            stopRecord,
+		"clear":                  clearMessages,
+		"add-ticker":             addTicker,
+		"ticker":                 printTicker,
+		"help-001":               help,
+		"set-channel-forms":      setFormChannel,
+		"set-verified-role":      setVerifiedRole,
+		"remove-verified-role":   removeVerifiedRole,
+		"set-welcome-channel":    setWelcomeChannel,
+		"remove-welcome-channel": removeWelcomeChannel,
 		"send-welcome": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			m := i.ApplicationCommandData().Options[0].UserValue(nil)
 			sendPrivateEmbedMessage(m.ID, generateWelcomeEmbed(m))
