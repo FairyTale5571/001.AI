@@ -54,6 +54,13 @@ type Alerts struct {
 	ChannelId string
 }
 
+type Tickers struct {
+	gorm.Model
+
+	GuildId string
+	Symbol  string
+}
+
 type Tickets struct {
 	gorm.Model
 

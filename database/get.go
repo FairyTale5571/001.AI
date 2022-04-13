@@ -23,3 +23,9 @@ func GetAlertsChannel(guildId string) ([]string, error) {
 	db.Table("alerts").Select("channel_id").Where("deleted_at is null and guild_id = ?", guildId).Scan(&ret)
 	return ret, nil
 }
+
+func GetTickers(guildId string) ([]string, error) {
+	var ret []string
+	db.Table("tickers").Select("symbol").Where("deleted_at is null and guild_id = ?", guildId).Scan(&ret)
+	return ret, nil
+}

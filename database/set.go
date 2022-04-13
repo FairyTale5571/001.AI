@@ -45,3 +45,10 @@ func SetAlertChannel(guildId, channelId string) {
 func RemoveVerifiedRole(guildId, roleId string) {
 	db.Where("guild_id = ? and role_id = ?", guildId, roleId).Delete(&VerifiedRole{})
 }
+
+func InsertNewTicker(ticker, guildId string) {
+	db.Create(&Tickers{
+		GuildId: guildId,
+		Symbol:  ticker,
+	})
+}

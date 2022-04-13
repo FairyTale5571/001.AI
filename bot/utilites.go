@@ -220,28 +220,6 @@ func help(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 }
 
-func sendImage(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	text := i.ApplicationCommandData().Options[0].StringValue()
-	fmt.Printf("ready to send image\n")
-	image := img.CreateImage(text)
-	if image == nil {
-		return
-	}
-
-	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Files: []*discordgo.File{
-				{
-					Name:        image.Name(),
-					ContentType: "image",
-					Reader:      image,
-				},
-			},
-		},
-	})
-}
-
 func sendPrivateMessageError(m *discordgo.MessageCreate) {
 	channel, err := s.UserChannelCreate(m.Author.ID)
 	if err != nil {
@@ -268,4 +246,14 @@ func sendPrivateMessageError(m *discordgo.MessageCreate) {
 
 func collectUser(user *discordgo.Member) {
 	database.InsertUser(user)
+}
+
+func struct2JSON(v interface{}) string {
+	b, _ := json.Marshal(v)
+	return string(b)
+}
+
+func trimZeros(str string) string {
+	return strings.TrimRight(str, "0")
+
 }

@@ -10,6 +10,32 @@ var (
 			Description: "Как мной пользоваться",
 			Version:     "1.0",
 		},
+		{
+			Name:        "add-ticker",
+			Description: "Добавить тикер для ежедневного отчета",
+			Version:     "1.1",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "ticker",
+					Description: "Введите тикер",
+					Required:    true,
+				},
+			},
+		},
+		{
+			Name:        "ticker",
+			Description: "Получить значение прямо сейчас",
+			Version:     "1.1",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "ticker",
+					Description: "Введите тикер",
+					Required:    true,
+				},
+			},
+		},
 		// set verified role
 		{
 			Name:        "set-verified-role",
@@ -124,8 +150,29 @@ var (
 				},
 			},
 		},
+		{
+			Name:        "clear",
+			Description: "удалить сообщения",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionInteger,
+					Name:        "count-messages",
+					Description: "Сколько удалить",
+					Required:    true,
+				},
+			},
+		},
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
+		"clear": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			clearMessages(s, i)
+		},
+		"add-ticker": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			addTicker(s, i)
+		},
+		"ticker": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			printTicker(s, i)
+		},
 		"help-001": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			help(s, i)
 		},

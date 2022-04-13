@@ -44,11 +44,11 @@ func Start() {
 		return
 	}
 	defer s.Close() // закроем сессию при завершении
-
 	for _, elem := range s.State.Guilds {
 		log.Printf("Guild: %s\n", elem.ID)
 		go addRemoveCommands(elem.ID)
 	}
+	startRoutine()
 	logger.PrintLog("Start goroutines")
 	stop := make(chan os.Signal)
 	signal.Notify(stop, os.Interrupt)

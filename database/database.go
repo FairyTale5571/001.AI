@@ -35,6 +35,7 @@ func ConnectDatabase() (*gorm.DB, error) {
 	db.AutoMigrate(ConnectLogs{})
 	db.AutoMigrate(FormsChannels{})
 	db.AutoMigrate(Users{})
+	db.AutoMigrate(Tickers{})
 
 	return db, nil
 }
