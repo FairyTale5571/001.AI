@@ -7,6 +7,7 @@ require (
 	github.com/getsentry/sentry-go v0.12.0
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
+	github.com/joho/godotenv v1.4.0
 	github.com/nicklaw5/helix/v2 v2.3.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/srevinsaju/gofer v0.0.0-20210303103339-e72cd69eb049
