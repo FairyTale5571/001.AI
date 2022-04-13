@@ -75,7 +75,7 @@ func sendPrivateEmbedMessage(user string, embed *discordgo.MessageEmbed) {
 				},
 				discordgo.Button{
 					Label: "МЕТОДИЧКА",
-					URL:   "https://paper.dropbox.com/doc/D3BhdvMwZOMiBKQwl2bVI",
+					URL:   "https://www.dropbox.com/scl/fi/t26nceqinmkowou47voyv/F.A.Q..paper?dl=0&rlkey=uaigqagwn92ur5777yo7iy30v",
 					Style: discordgo.LinkButton,
 					Emoji: discordgo.ComponentEmoji{
 						Name: "📑",
