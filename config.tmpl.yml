@@ -1,12 +1,14 @@
 token: ""
 prefixCommand: "!"
-version: "1.0.3"
-sentryKey: ""
+version: ""
+sentry_key: ""
 telegram_token: ""
 port: ":8080"
 twitch_token: ""
-ip: "127.0.0.1"
+
+
+ip: "localhost"
 dbPort: 3306
 database: "001"
 user: "root"
-password: "123"
+password: ""
