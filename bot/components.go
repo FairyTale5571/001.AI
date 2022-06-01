@@ -84,3 +84,29 @@ func printRules(chanelId string) {
 		return
 	}
 }
+
+func printRules2(chanelId string) {
+	rules := fmt.Sprintf("```" +
+		"ПРАВИЛА\n" +
+		"1 - При попытке заскамить кого-либо будет БАН.\n" +
+		"2 - За оскорбления таймаут, потом БАН.\n" +
+		"3 - Без политики! за разжигание ненависти будет БАН.\n" +
+		"4 - Без NSFW.\n" +
+		"5 - Если модератор говорит вам перестать делать что-либо, вы должны перестать." +
+		"```")
+
+	data := &discordgo.MessageSend{
+		Content: rules,
+	}
+
+	msg, err := s.ChannelMessageSendComplex(chanelId, data)
+	if err != nil {
+		logger.PrintLog("cant print rules %s\n", err.Error())
+		return
+	}
+	err = s.MessageReactionAdd(msg.ChannelID, msg.ID, "✅")
+	if err != nil {
+		logger.PrintLog("cant print rules %s\n", err.Error())
+		return
+	}
+}

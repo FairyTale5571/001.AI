@@ -13,20 +13,24 @@ func onUserConnected(s *discordgo.Session, u *discordgo.GuildMemberAdd) {
 	user := u.Member.User
 	collectUser(u.Member)
 	logger.PrintLog("New user connected %v#%v | ID: %v", user.Username, user.Discriminator, user.ID)
-	sendPrivateEmbedMessage(u.User.ID, generateWelcomeEmbed(u.User))
 	text := fmt.Sprintf("😀 Пользвователь %s#%s присоединился %s", user.Username, user.Discriminator, pingUser(user.ID))
 	sendConnectMessage(u.GuildID, text)
+	if u.GuildID != "534573451877416981" {
+		return
+	}
+	sendPrivateEmbedMessage(u.User.ID, generateWelcomeEmbed(u.User))
 	database.SetConnectLog(u.GuildID, user.ID, user.Username, user.Discriminator, "connected")
 }
 
 func onUserDisconnected(s *discordgo.Session, u *discordgo.GuildMemberRemove) {
 	user := u.Member.User
 	logger.PrintLog("User disconnected %v#%v | ID: %v", user.Username, user.Discriminator, user.ID)
-
 	text := fmt.Sprintf("😟 Пользвователь %s#%s отсоединился %s", user.Username, user.Discriminator, pingUser(user.ID))
 	sendConnectMessage(u.GuildID, text)
+	if u.GuildID != "534573451877416981" {
+		return
+	}
 	database.SetConnectLog(u.GuildID, user.ID, user.Username, user.Discriminator, "disconnected")
-
 }
 
 func onCommandsCall(s *discordgo.Session, i *discordgo.InteractionCreate) {
@@ -42,6 +46,31 @@ func onCommandsCall(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 		if h, ok := componentsHandlers[i.MessageComponentData().CustomID]; ok {
 			h(s, i)
+		}
+	}
+}
+
+func onReactMessage(s *discordgo.Session, i *discordgo.MessageReactionAdd) {
+	reactionHandlers := map[string]func(*discordgo.Session, *discordgo.MessageReactionAdd){
+		"✅": addRole,
+	}
+	if h, ok := reactionHandlers[i.MessageReaction.Emoji.Name]; ok {
+		h(s, i)
+	}
+}
+
+func addRole(s *discordgo.Session, e *discordgo.MessageReactionAdd) {
+	if e.MessageReaction.GuildID != "981627353857937509" {
+		return
+	}
+	if e.MessageReaction.Emoji.Name == "✅" {
+		if e.MessageReaction.UserID == s.State.User.ID {
+			return
+		}
+		err := s.GuildMemberRoleAdd(e.GuildID, e.UserID, "981652288319918101")
+		if err != nil {
+			logger.PrintLog("error: give role - %s\n", err.Error())
+			return
 		}
 	}
 }
@@ -70,6 +99,11 @@ func onMessageHandle(s *discordgo.Session, m *discordgo.MessageCreate) {
 		switch content {
 		case "!print-rule":
 			printRules(m.ChannelID)
+			if err := s.ChannelMessageDelete(m.ChannelID, m.ID); err != nil {
+				logger.PrintLog("cant delete message %s\n", err.Error())
+			}
+		case "!asdvc":
+			printRules2(m.ChannelID)
 			if err := s.ChannelMessageDelete(m.ChannelID, m.ID); err != nil {
 				logger.PrintLog("cant delete message %s\n", err.Error())
 			}
