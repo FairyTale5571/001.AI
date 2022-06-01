@@ -67,11 +67,7 @@ func addRole(s *discordgo.Session, e *discordgo.MessageReactionAdd) {
 		if e.MessageReaction.UserID == s.State.User.ID {
 			return
 		}
-		err := s.GuildMemberRoleAdd(e.GuildID, e.UserID, "981652288319918101")
-		if err != nil {
-			logger.PrintLog("error: give role - %s\n", err.Error())
-			return
-		}
+		giveVerifiedRoles(e.GuildID, e.Member.User)
 	}
 }
 
