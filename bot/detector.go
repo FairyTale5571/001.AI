@@ -20,89 +20,14 @@ const (
 
 	BinanceURLTickerArray = "https://api3.binance.com/api/v3/ticker/24hr?symbols="
 	BinanceURLTicker      = "https://api3.binance.com/api/v3/ticker/24hr?symbol="
-
-	YFIKey    = "aDRnN0KL7m52V8tTBhGOA2Z69brK92fD5XXIsSXI"
-	SP500     = "%5EGSPC"
-	YFIApiUrl = "https://yfapi.net/v7/finance/options/"
 )
-
-func sp500() *YFI {
-	var client http.Client
-	var y YFI
-	req, err := http.NewRequest("GET", YFIApiUrl+SP500, nil)
-	req.Header.Set("X-API-KEY", YFIKey)
-	resp, err := client.Do(req)
-
-	defer resp.Body.Close()
-	if err != nil {
-		log.Println(err)
-		return nil
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		log.Printf("status code: %d\n", resp.StatusCode)
-		return nil
-	} else {
-		bodyBytes, err := io.ReadAll(resp.Body)
-		if err != nil {
-			log.Println(err)
-			return nil
-		}
-		if !json.Valid(bodyBytes) {
-			fmt.Println("json is invalid")
-			return nil
-		}
-		err = json.Unmarshal(bodyBytes, &y)
-
-		if err != nil {
-			fmt.Println(err)
-			return nil
-		}
-	}
-	return &y
-}
-
-func tickers(guildId string) *ExchangeInfos {
-
-	var e ExchangeInfos
-	var client http.Client
-
-	symbols, err := database.GetTickers(guildId)
-	fmt.Printf("%s%s\n", BinanceURLTickerArray, struct2JSON(symbols))
-
-	resp, err := client.Get(fmt.Sprintf("%s%s", BinanceURLTickerArray, struct2JSON(symbols)))
-	defer resp.Body.Close()
-	if err != nil {
-		log.Println(err)
-		return nil
-	}
-
-	if resp.StatusCode == http.StatusOK {
-		bodyBytes, err := io.ReadAll(resp.Body)
-		if err != nil {
-			log.Println(err)
-			return nil
-		}
-		if !json.Valid(bodyBytes) {
-			fmt.Println("json is invalid")
-			return nil
-		}
-		err = json.Unmarshal(bodyBytes, &e)
-
-		if err != nil {
-			fmt.Println(err)
-			return nil
-		}
-	}
-	return &e
-}
 
 func ticker(ticker string) *ExchangeInfo {
 	var e ExchangeInfo
 	var client http.Client
 
 	resp, err := client.Get(fmt.Sprintf("%s%s", BinanceURLTicker, ticker))
-	defer resp.Body.Close()
+
 	if err != nil {
 		log.Println(err)
 		return nil
@@ -134,7 +59,7 @@ func checkTicker(ticker string) error {
 
 	const url = "https://api.binance.com/api/v3/exchangeInfo?symbol="
 	resp, err := client.Get(url + strings.ToUpper(ticker))
-	defer resp.Body.Close()
+
 	if err != nil {
 		log.Println(err)
 		return err
@@ -177,23 +102,6 @@ func addTicker(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			Content: "Тикер: " + ticker + " добавлен в список",
 		},
 	})
-}
-
-func printPrices(guildId, channelId string) {
-	t := *tickers(guildId)
-	fmt.Printf("tickers: %v\n", t)
-
-	e := embed.NewEmbed()
-	e.MessageEmbed.Type = discordgo.EmbedTypeImage
-	e.SetColor(0xF0B90B)
-	e.SetTitle("Утренний отчет")
-	for _, i := range t {
-		e.AddField(i.Symbol, strings.TrimRight(i.LastPrice, "0"))
-	}
-	sp := sp500().OptionChain.Result[0].Quote
-	e.AddField(sp.ShortName, fmt.Sprintf("%.2f", sp.RegularMarketPrice))
-	s.ChannelMessageSendEmbed(channelId, e.MessageEmbed)
-
 }
 
 func printTicker(s *discordgo.Session, i *discordgo.InteractionCreate) {

@@ -11,10 +11,30 @@ import (
 )
 
 func clearMessages(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	//lenMsg := i.Interaction.ApplicationCommandData().Options[0].IntValue()
-	go func() {
+	vals := i.ApplicationCommandData().Options[0].IntValue()
 
+	start := 0
+	go func() {
+		for {
+			msgs, err := s.ChannelMessages(i.Interaction.ChannelID, int(vals), "", "", "")
+			if err != nil {
+				logger.PrintLog("cant find all messages \n")
+				return
+			}
+			start++
+			fmt.Printf("find %d messages\n", len(msgs))
+			for idx, msg := range msgs {
+				if err := s.ChannelMessageDelete(i.Interaction.ChannelID, msg.ID); err != nil {
+					fmt.Printf("cant delete message: %s\n", err.Error())
+				}
+				fmt.Printf("message idx %d/%d deleted\n", idx, start)
+			}
+			if len(msgs) != 100 {
+				break
+			}
+		}
 	}()
+	fmt.Printf("all messages deleted\n")
 }
 
 func sendMessage(channelId string, t string) {
@@ -75,7 +95,7 @@ func sendPrivateEmbedMessage(user string, embed *discordgo.MessageEmbed) {
 				},
 				discordgo.Button{
 					Label: "МЕТОДИЧКА",
-					URL:   "https://www.dropbox.com/scl/fi/t26nceqinmkowou47voyv/F.A.Q..paper?dl=0&rlkey=uaigqagwn92ur5777yo7iy30v",
+					URL:   "https://www.dropbox.com/scl/fi/t26nceqinmkowou47voyv/F.A.Q..paper?dl=0&rlkey=9b5okx9p3gdmopxid1jdi74ta",
 					Style: discordgo.LinkButton,
 					Emoji: discordgo.ComponentEmoji{
 						Name: "📑",

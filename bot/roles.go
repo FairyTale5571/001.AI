@@ -126,6 +126,19 @@ func setFormChannel(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	})
 }
 
+// установить канал с логами
+func setMembersChannel(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	channel := i.ApplicationCommandData().Options[0].ChannelValue(s)
+	database.SetTotalMemberChannel(i.GuildID, channel.ID)
+	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: "Канал " + channel.Mention() + " установлен",
+			Flags:   1 << 6,
+		},
+	})
+}
+
 // убрать канал с логами
 func removeWelcomeChannel(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	channel := i.ApplicationCommandData().Options[0].ChannelValue(s)

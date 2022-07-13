@@ -5,6 +5,12 @@ import (
 	"time"
 )
 
+const (
+	ChannelSP500 = "961293558114041866"
+	ChannelBTC   = "961353697571524639"
+	ChannelUsers = "981627354348675132"
+)
+
 func startRoutine() {
 	ticker := time.NewTicker(10 * time.Second)
 	quit := make(chan struct{})
@@ -12,7 +18,7 @@ func startRoutine() {
 		for {
 			select {
 			case <-ticker.C:
-				refreshChannels()
+				//refreshChannels()
 			case <-quit:
 				ticker.Stop()
 				return
@@ -21,20 +27,13 @@ func startRoutine() {
 	}()
 }
 
-func refreshChannels() {
-	fmt.Printf("refresh channels\n")
-	//go refreshBTC()
-	go refreshSP()
+func refreshChannels(guild string) {
+	return
+
 }
 
-const (
-	ChannelSP500 = "961293558114041866"
-	ChannelBTC   = "961353697571524639"
-)
-
 func refreshSP() {
-	res := sp500().OptionChain.Result[0].Quote
-	_, err := s.ChannelEdit(ChannelSP500, fmt.Sprintf("%s: %.2f", res.ShortName, res.RegularMarketPrice))
+	_, err := s.ChannelEdit(ChannelSP500, fmt.Sprintf("%s: %.2f", "S&P 500: ", 4424.9))
 	if err != nil {
 		fmt.Printf("%s | SP500\n", err.Error())
 	}

@@ -11,10 +11,13 @@ import (
 
 func onUserConnected(s *discordgo.Session, u *discordgo.GuildMemberAdd) {
 	user := u.Member.User
+	counterAdd(u.GuildID)
 	collectUser(u.Member)
 	logger.PrintLog("New user connected %v#%v | ID: %v", user.Username, user.Discriminator, user.ID)
 	text := fmt.Sprintf("😀 Пользвователь %s#%s присоединился %s", user.Username, user.Discriminator, pingUser(user.ID))
 	sendConnectMessage(u.GuildID, text)
+	countMembers[u.GuildID] = countMembers[u.GuildID] + 1
+	refreshChannels(u.GuildID)
 	if u.GuildID != "534573451877416981" {
 		return
 	}
@@ -22,11 +25,23 @@ func onUserConnected(s *discordgo.Session, u *discordgo.GuildMemberAdd) {
 	database.SetConnectLog(u.GuildID, user.ID, user.Username, user.Discriminator, "connected")
 }
 
+func counterAdd(guild string) {
+	countMembers[guild] = countMembers[guild] + 1
+	refreshChannels(guild)
+}
+
+func counterMin(guild string) {
+	countMembers[guild] = countMembers[guild] - 1
+	refreshChannels(guild)
+}
+
 func onUserDisconnected(s *discordgo.Session, u *discordgo.GuildMemberRemove) {
+
 	user := u.Member.User
 	logger.PrintLog("User disconnected %v#%v | ID: %v", user.Username, user.Discriminator, user.ID)
 	text := fmt.Sprintf("😟 Пользвователь %s#%s отсоединился %s", user.Username, user.Discriminator, pingUser(user.ID))
 	sendConnectMessage(u.GuildID, text)
+	counterMin(u.GuildID)
 	if u.GuildID != "534573451877416981" {
 		return
 	}
@@ -57,6 +72,16 @@ func onReactMessage(s *discordgo.Session, i *discordgo.MessageReactionAdd) {
 	if h, ok := reactionHandlers[i.MessageReaction.Emoji.Name]; ok {
 		h(s, i)
 	}
+}
+
+var countMembers = make(map[string]int)
+
+func onGuildCreate(s *discordgo.Session, g *discordgo.GuildCreate) {
+	fmt.Printf("guid %v|%v Users: %d\n", g.Name, g.ID, g.MemberCount)
+	countMembers[g.ID] = g.MemberCount
+	refreshChannels(g.ID)
+	addRemoveCommands(g.ID)
+
 }
 
 func addRole(s *discordgo.Session, e *discordgo.MessageReactionAdd) {
@@ -103,8 +128,6 @@ func onMessageHandle(s *discordgo.Session, m *discordgo.MessageCreate) {
 			if err := s.ChannelMessageDelete(m.ChannelID, m.ID); err != nil {
 				logger.PrintLog("cant delete message %s\n", err.Error())
 			}
-		case "!tickers":
-			printPrices(m.GuildID, m.ChannelID)
 		case "!w":
 			for _, member := range getAllUsers(m.GuildID) {
 				collectUser(member)

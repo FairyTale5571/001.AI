@@ -31,6 +31,7 @@ func ConnectDatabase() (*gorm.DB, error) {
 		panic(err)
 	}
 	db.AutoMigrate(VerifiedRole{})
+	db.AutoMigrate(TotalMembersChannel{})
 	db.AutoMigrate(ConLeaveChannels{})
 	db.AutoMigrate(ConnectLogs{})
 	db.AutoMigrate(FormsChannels{})

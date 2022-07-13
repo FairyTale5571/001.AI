@@ -3,6 +3,7 @@ prefixCommand: "!"
 version: ""
 sentry_key: ""
 telegram_token: ""
+url: "localhost"
 port: ":8080"
 twitch_token: ""
 

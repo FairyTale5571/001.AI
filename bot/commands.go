@@ -1,6 +1,10 @@
 package bot
 
 import (
+	"001.AI/logger"
+	"encoding/csv"
+	"os"
+
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -149,6 +153,19 @@ var (
 				},
 			},
 		},
+		// set-channel-forms
+		{
+			Name:        "set-total-members",
+			Description: "Установить канал для отображения количества пользователей",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionChannel,
+					Name:        "channel-option",
+					Description: "Channel option",
+					Required:    true,
+				},
+			},
+		},
 		// send-welcome
 		{
 			Name:        "send-welcome",
@@ -175,9 +192,13 @@ var (
 				},
 			},
 		},
+		{
+			Name:        "get-users",
+			Description: "Получить список пользователей",
+		},
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-
+		"get-users":              getUsers,
 		"join":                   joinVoice,
 		"disconnect":             disconnectVoice,
 		"start-record":           startRecord,
@@ -186,6 +207,7 @@ var (
 		"add-ticker":             addTicker,
 		"ticker":                 printTicker,
 		"help-001":               help,
+		"set-total-members":      setMembersChannel,
 		"set-channel-forms":      setFormChannel,
 		"set-verified-role":      setVerifiedRole,
 		"remove-verified-role":   removeVerifiedRole,
@@ -197,3 +219,64 @@ var (
 		},
 	}
 )
+
+func getUsers(s *discordgo.Session, i *discordgo.InteractionCreate) {
+
+	err := os.Remove("users.csv")
+	if err != nil {
+		logger.PrintLog(err.Error())
+	}
+
+	f, err := os.OpenFile("users.csv", os.O_RDWR|os.O_CREATE, 0666)
+	if err != nil {
+		logger.PrintLog("get open file error: %s\n", err.Error())
+		return
+	}
+	defer f.Close()
+
+	defer sendUsersFile(i.ChannelID)
+
+	w := csv.NewWriter(f)
+	err = w.Write([]string{"id", "name", "discriminator", "joined_at"})
+	if err != nil {
+		logger.PrintLog("get write error: %s\n", err.Error())
+		return
+	}
+
+	after := ""
+	for {
+		users, err := s.GuildMembers(i.GuildID, after, 1000)
+		if err != nil {
+			logger.PrintLog("get users error: %s\n", err.Error())
+			break
+		}
+		for _, v := range users {
+			if err := w.Write([]string{v.User.ID, v.User.Username, v.User.Discriminator, v.JoinedAt.Format("02-01-2006 15:01-05")}); err != nil {
+				logger.PrintLog("get write error: %s\n", err.Error())
+				return
+			}
+		}
+		after = users[len(users)-1].User.ID
+		if len(users) != 1000 {
+			break
+		}
+	}
+	w.Flush()
+
+}
+
+func sendUsersFile(channelId string) {
+
+	f, err := os.OpenFile("users.csv", os.O_RDONLY, 0666)
+	if err != nil {
+		logger.PrintLog("get open file error: %s\n", err.Error())
+		return
+	}
+	defer f.Close()
+
+	_, err = s.ChannelFileSend(channelId, "users.csv", f)
+	if err != nil {
+		logger.PrintLog("get send error: %s\n", err.Error())
+		return
+	}
+}

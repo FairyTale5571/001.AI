@@ -55,6 +55,13 @@ func InsertUser(user *discordgo.Member) {
 	//
 }
 
+func SetTotalMemberChannel(guildId, channelId string) {
+	db.Create(&TotalMembersChannel{
+		GuildId:   guildId,
+		ChannelID: channelId,
+	})
+}
+
 func SetAlertChannel(guildId, channelId string) {
 	db.Create(&Alerts{
 		GuildId:   guildId,

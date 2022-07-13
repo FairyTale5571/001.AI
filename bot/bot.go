@@ -4,7 +4,6 @@ import (
 	"001.AI/config"
 	"001.AI/logger"
 	"github.com/bwmarrin/discordgo"
-	log "github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
 )
@@ -23,33 +22,31 @@ func Start() {
 		return
 	}
 
-	// даем необходимые полномочия
-	s.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsAll)
+	s.Identify.Intents = discordgo.IntentsAllWithoutPrivileged | discordgo.IntentsGuildMembers | discordgo.IntentsGuildMessages
 
-	// добавляем обработчики событий
-	s.AddHandler(onUserConnected)    // обработчик новых пользователей
-	s.AddHandler(onUserDisconnected) // обработчик ливнувших пользователей
-	s.AddHandler(onMessageHandle)    // Обработчик сообщений
-	s.AddHandler(onCommandsCall)     // обработчик / команд
+	s.AddHandler(onUserConnected)
+	s.AddHandler(onUserDisconnected)
+	s.AddHandler(onMessageHandle)
+	s.AddHandler(onCommandsCall)
 	s.AddHandler(onReactMessage)
+	s.AddHandler(onGuildCreate)
 
-	// Проверям работает ли бот
 	s.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
 		logger.PrintLog("Bot is up!")
 	})
 
-	// открываем сессию
 	err = s.Open()
 	if err != nil {
 		logger.PrintLog("Cannot open the session: %v", err)
 		return
 	}
-	defer s.Close() // закроем сессию при завершении
-	for _, elem := range s.State.Guilds {
-		log.Printf("Guild: %s\n", elem.ID)
-		go addRemoveCommands(elem.ID)
-	}
-	startRoutine()
+	defer func(s *discordgo.Session) {
+		err := s.Close()
+		if err != nil {
+			logger.PrintLog("Cannot close the session: %v", err)
+		}
+	}(s) // закроем сессию при завершении
+
 	logger.PrintLog("Start goroutines")
 	stop := make(chan os.Signal)
 	signal.Notify(stop, os.Interrupt)

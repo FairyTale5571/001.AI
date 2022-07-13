@@ -23,6 +23,13 @@ type VerifiedRole struct {
 	RoleId  string `gorm:"uniqueIndex"`
 }
 
+type TotalMembersChannel struct {
+	gorm.Model
+
+	GuildId   string `gorm:"type:varchar(255);not null"`
+	ChannelID string `gorm:"type:varchar(255);not null"`
+}
+
 type ConLeaveChannels struct {
 	gorm.Model
 
@@ -69,4 +76,12 @@ type Tickets struct {
 	UserName          string
 	UserDiscriminator string
 	ReasonToOpen      string
+}
+
+type Settings struct {
+	gorm.Model
+
+	GuildId string
+	Setting string
+	Value   string
 }

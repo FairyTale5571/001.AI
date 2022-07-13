@@ -7,12 +7,31 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"path/filepath"
+	"strings"
 )
 
 var router *gin.Engine
 
+const (
+	pathToRecords = "stream_records"
+)
+
 func mainRouter() {
 	router.POST("/submit_form", unmarshallForm)
+	router.GET("/streams/:filename", func(ctx *gin.Context) {
+		fileName := ctx.Param("filename")
+		targetPath := filepath.Join(pathToRecords, fileName)
+		if !strings.HasPrefix(filepath.Clean(targetPath), pathToRecords) {
+			ctx.String(403, "Look like you attacking me")
+			return
+		}
+		ctx.Header("Content-Description", "File Transfer")
+		ctx.Header("Content-Transfer-Encoding", "binary")
+		ctx.Header("Content-Disposition", "attachment; filename="+fileName)
+		ctx.Header("Content-Type", "application/octet-stream")
+		ctx.File(targetPath)
+	})
 }
 
 func CreateGin() {

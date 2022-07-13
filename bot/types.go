@@ -1,5 +1,15 @@
 package bot
 
+import (
+	"github.com/bwmarrin/discordgo"
+)
+
+var voiceChannels = map[string]*discordgo.VoiceConnection{}
+
+const (
+	pathToRecords = "stream_records"
+)
+
 type ExchangeInfo struct {
 	AskPrice           string `json:"askPrice"`
 	AskQty             string `json:"askQty"`
